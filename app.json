@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "fire-brigade",
+    "slug": "fire-brigade",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "fire-brigade"
+}
