@@ -1,4 +1,4 @@
-package com.firebrigade;
+package com.maksymilianorg.firebrigade;
 
 import android.app.Application;
 import android.content.res.Configuration;

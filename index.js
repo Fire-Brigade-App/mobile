@@ -1,6 +1,9 @@
 import { registerRootComponent } from 'expo';
-
+import { registerBackgroundMessageHandler } from './src/utils/notifications';
 import App from './App';
+
+// Register handler for Background & Quit state messages
+registerBackgroundMessageHandler();
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in Expo Go or in a native build,

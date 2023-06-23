@@ -1,4 +1,4 @@
-package com.firebrigade;
+package com.maksymilianorg.firebrigade;
 
 import android.os.Build;
 import android.os.Bundle;
