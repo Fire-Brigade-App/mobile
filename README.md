@@ -7,8 +7,8 @@ Android & iOS app for the support of volunteer fire brigades by measuring in rea
 # Importing secrets from a .env file
 eas secret:push --scope project --env-file ./.env
 
-# Upload google-services.json to EAS
-eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --force
+# Upload google-services-dev.json to EAS
+eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services-dev.json --force
 
 # To view any existing secrets for this project, run
 eas secret:list
