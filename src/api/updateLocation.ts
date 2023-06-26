@@ -1,7 +1,8 @@
 import { getData, storeData } from "../utils/asyncStorage";
+import { LocationObject } from "../utils/location";
 import { post } from "./api";
 
-export default async function updateLocation(location) {
+export default async function updateLocation(location: LocationObject) {
   console.log("Init the location updating:", JSON.stringify(location));
 
   const IS_ACTIVE = "is-location-update-active";
@@ -11,11 +12,11 @@ export default async function updateLocation(location) {
   if (isActive === "true") {
     return;
   }
-  
+
   // Prevent another potential location updates
   await storeData(IS_ACTIVE, "true");
 
-  // await post("/", location);
+  await post("/", location);
 
   // Unblock another potential location updates
   await storeData(IS_ACTIVE, "false");

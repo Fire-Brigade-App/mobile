@@ -1,6 +1,6 @@
 import { API_URL } from "@env";
 
-const api = async (path, method = "GET", data) => {
+const api = async (path: string, method = "GET", data?: object) => {
   try {
     const response = await fetch(API_URL + path, {
       method,
@@ -16,5 +16,6 @@ const api = async (path, method = "GET", data) => {
   }
 };
 
-export const get = async (path) => api(path);
-export const post = async (path, data) => api(path, "POST", data);
+export const get = async (path: string) => api(path);
+export const post = async (path: string, data: object) =>
+  api(path, "POST", data);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import { StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { defineLocationTask } from "./src/utils/location";
@@ -15,7 +15,7 @@ configMapbox();
 defineLocationTask();
 defineBackgroundFetchTask();
 
-export default function AppRoot() {
+const AppRoot: FC = () => {
   const [isUserTracked, setIsUserTracked] = useState(false);
 
   useEffect(() => {
@@ -62,3 +62,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default AppRoot;

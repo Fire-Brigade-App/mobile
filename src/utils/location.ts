@@ -4,6 +4,10 @@ import updateLocation from "../api/updateLocation";
 
 const LOCATION_TASK_NAME = "background-location-task";
 
+export interface LocationObject extends Location.LocationObject {
+  source: "background-location-task" | "background-fetch";
+}
+
 export const defineLocationTask = async () => {
   TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
     if (error) {
@@ -11,16 +15,15 @@ export const defineLocationTask = async () => {
       return;
     }
     if (data) {
-      const { locations } = data;
+      const { locations } = data as { locations: Location.LocationObject };
       const location = {
         ...locations[0],
         source: LOCATION_TASK_NAME,
-        mocked: false,
       };
       await updateLocation(location);
     }
   });
-}
+};
 
 export const startLocationUpdates = async () => {
   const { status: foregroundStatus } =
@@ -38,7 +41,7 @@ export const startLocationUpdates = async () => {
 
 export const hasStartedLocationUpdates = async () => {
   return Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
-}
+};
 
 export const stopLocationUpdates = async () => {
   if (await hasStartedLocationUpdates()) {
@@ -47,10 +50,11 @@ export const stopLocationUpdates = async () => {
 };
 
 export const getLocation = async () => {
-  let location;
-    try {
-      location = await Location.getCurrentPositionAsync();
-    } catch (err) {
-      location = await Location.getLastKnownPositionAsync();
-    }
-}
+  let location: Location.LocationObject;
+  try {
+    location = await Location.getCurrentPositionAsync();
+  } catch (err) {
+    location = await Location.getLastKnownPositionAsync();
+  }
+  return location;
+};

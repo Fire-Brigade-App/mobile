@@ -1,8 +1,12 @@
-import React from "react";
+import React, { FC } from "react";
 import Mapbox from "@rnmapbox/maps";
 import { Pressable, StyleSheet, Text } from "react-native";
 
-export const Map = ({ isUserTracked }) => {
+interface IMap {
+  isUserTracked: boolean;
+}
+
+export const Map: FC<IMap> = ({ isUserTracked }) => {
   return (
     <Mapbox.MapView
       style={styles.map}

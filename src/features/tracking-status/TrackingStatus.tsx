@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import {
   isBackgroundFetchTaskRegistered,
   registerBackgroundFetchAsync,
@@ -11,7 +11,15 @@ import {
 } from "../../utils/location";
 import { StyleSheet, Switch, Text, View } from "react-native";
 
-export const TrackingStatus = ({ isUserTracked, setIsUserTracked }) => {
+interface ITrackingStatus {
+  isUserTracked: boolean;
+  setIsUserTracked: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const TrackingStatus: FC<ITrackingStatus> = ({
+  isUserTracked,
+  setIsUserTracked,
+}) => {
   const checkTrackingStatus = async () => {
     const isBackgroundFetchActive = await isBackgroundFetchTaskRegistered();
     const isLocationUpdatesActive = await hasStartedLocationUpdates();
@@ -53,7 +61,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#DDDDDD",
     borderBottomWidth: 1,
     flexDirection: "row",
-    // justifyContent: "space-between"
   },
   textContainer: {
     margin: 10,
