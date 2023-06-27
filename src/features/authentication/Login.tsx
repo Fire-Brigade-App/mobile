@@ -9,10 +9,12 @@ import {
 } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { Screen } from "../screen/Screen";
+import { GoogleSigninButton } from "./GoogleSignin";
 
 enum ErrorCode {
   EMAIL_ALREADY_IN_USE = "auth/email-already-in-use",
   INVALID_EMAIL = "auth/invalid-email",
+  USER_DISABLED = "auth/user-disabled",
 }
 
 const createUserWithEmailAndPassword = async (
@@ -40,8 +42,6 @@ const signInWithEmailAndPassword = async (email: string, password: string) => {
     });
 };
 
-const handleError = (error) => {};
-
 export const Login: FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,8 +55,13 @@ export const Login: FC = () => {
       error = await signInWithEmailAndPassword(email, password);
     }
     setLoading(false);
+
     if (error && error.code === ErrorCode.INVALID_EMAIL) {
       setError("That email address is invalid!");
+    } else if (error && error.code === ErrorCode.USER_DISABLED) {
+      setError("That account is disabled! Please contact your administrator.");
+    } else {
+      setError("Error code: " + error.code);
     }
   };
 
@@ -82,6 +87,9 @@ export const Login: FC = () => {
         ) : (
           <Button onPress={handleLogin} title="Login" />
         )}
+        <View style={styles.google}>
+          <GoogleSigninButton />
+        </View>
       </View>
     </Screen>
   );
@@ -104,5 +112,9 @@ const styles = StyleSheet.create({
   },
   error: {
     color: "red",
+  },
+  google: {
+    alignItems: "center",
+    marginTop: 25,
   },
 });

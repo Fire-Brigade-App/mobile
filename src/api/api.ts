@@ -1,8 +1,6 @@
-import { API_URL } from "@env";
-
 const api = async (path: string, method = "GET", data?: object) => {
   try {
-    const response = await fetch(API_URL + path, {
+    const response = await fetch(process.env.API_URL + path, {
       method,
       headers: {
         "Content-Type": "application/json",
