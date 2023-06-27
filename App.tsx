@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FC } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { defineLocationTask } from "./src/utils/location";
 import { defineBackgroundFetchTask } from "./src/utils/backgroundFetch";
@@ -7,15 +7,19 @@ import {
   registerMessageHandler,
   unsubscribeMessageHandler,
 } from "./src/utils/notifications";
-import { configMapbox } from "./src/features/map/mapbox";
 import { Map } from "./src/features/map/Map";
 import { TrackingStatus } from "./src/features/tracking-status/TrackingStatus";
+import { useLogin } from "./src/features/authentication/useLogin";
+import { Screen } from "./src/features/screen/Screen";
+import { Loader } from "./src/features/loader/Loader";
+import { Login } from "./src/features/authentication/Login";
+import { Logout } from "./src/features/authentication/Logout";
 
-configMapbox();
 defineLocationTask();
 defineBackgroundFetchTask();
 
 const AppRoot: FC = () => {
+  const { initializing, user } = useLogin();
   const [isUserTracked, setIsUserTracked] = useState(false);
 
   useEffect(() => {
@@ -24,8 +28,12 @@ const AppRoot: FC = () => {
     return unsubscribeMessageHandler;
   }, []);
 
+  if (initializing) return <Loader />;
+
+  if (!user) return <Login />;
+
   return (
-    <View style={styles.screen}>
+    <Screen>
       <View style={styles.map}>
         <Map isUserTracked={isUserTracked} />
       </View>
@@ -34,18 +42,19 @@ const AppRoot: FC = () => {
           isUserTracked={isUserTracked}
           setIsUserTracked={setIsUserTracked}
         />
+        <Text>Welcome {user.email}</Text>
+        <Logout />
         <View style={styles.list}></View>
       </View>
       <StatusBar style="auto" />
-    </View>
+    </Screen>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  screen: {
+  login: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    alignSelf: "stretch",
   },
   map: {
     flex: 1,

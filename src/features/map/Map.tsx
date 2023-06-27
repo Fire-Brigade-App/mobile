@@ -1,10 +1,13 @@
 import React, { FC } from "react";
 import Mapbox from "@rnmapbox/maps";
 import { Pressable, StyleSheet, Text } from "react-native";
+import { configMapbox } from "./mapbox";
 
 interface IMap {
   isUserTracked: boolean;
 }
+
+configMapbox();
 
 export const Map: FC<IMap> = ({ isUserTracked }) => {
   return (
@@ -17,10 +20,7 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
     >
       {isUserTracked && (
         <>
-          <Mapbox.UserLocation
-            requestsAlwaysUse={true}
-            minDisplacement={10}
-          />
+          <Mapbox.UserLocation requestsAlwaysUse={true} minDisplacement={10} />
           <Mapbox.Camera followUserLocation={true} followZoomLevel={13} />
         </>
       )}
