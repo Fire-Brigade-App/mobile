@@ -30,13 +30,30 @@ export default {
     android: {
       googleServicesFile:
         process.env.GOOGLE_SERVICES_JSON ?? "./google-services-dev.json",
+      intentFilters: [
+        {
+          action: "VIEW",
+          data: [
+            {
+              scheme: "https",
+              host: "firebrigade.page.link",
+              pathPrefix: "/",
+            },
+          ],
+          category: ["BROWSABLE", "DEFAULT"],
+          autoVerify: true, // required to work on newer android versions
+        },
+      ],
       permissions: [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.ACCESS_BACKGROUND_LOCATION",
       ],
-      package: process.env.PACKAGE_NAME,
+      package: "com.maksymilianorg.firebrigade",
+    },
+    ios: {
+      associatedDomains: ["applinks:https://firebrigade.page.link"],
     },
   },
   name: "fire-brigade",

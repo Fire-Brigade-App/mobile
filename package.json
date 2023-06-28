@@ -5,16 +5,20 @@
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
+    "android:device": "npx expo run:android --device",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "device:android": "expo run:android --device",
     "rebuild": "expo prebuild",
-    "build": "npx eas build -p android --profile preview"
+    "build:android": "npx eas build --platform android --profile development",
+    "build:android:preview": "npx eas build --platform android --profile preview",
+    "build:android:prod": "npx eas build --platform android --profile production",
+    "log-android": "npx react-native log-android"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-native-firebase/app": "^18.1.0",
     "@react-native-firebase/auth": "^18.1.0",
+    "@react-native-firebase/dynamic-links": "^18.1.0",
     "@react-native-firebase/messaging": "^18.1.0",
     "@react-native-google-signin/google-signin": "^10.0.1",
     "@rnmapbox/maps": "^10.0.8",
