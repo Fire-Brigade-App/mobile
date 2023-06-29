@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 export default {
   expo: {
     name: "fire-brigade",
@@ -6,7 +8,7 @@ export default {
     assetBundlePatterns: ["**/*"],
     extra: {
       eas: {
-        projectId: "85590386-1e78-4f58-8476-35c071c2f9de",
+        projectId: process.env.EAS_PROJECT_ID,
       },
     },
     plugins: [
@@ -29,14 +31,14 @@ export default {
     ],
     android: {
       googleServicesFile:
-        process.env.GOOGLE_SERVICES_JSON ?? "./google-services-dev.json",
+        process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
       intentFilters: [
         {
           action: "VIEW",
           data: [
             {
-              scheme: "https",
-              host: "firebrigade.page.link",
+              scheme: process.env.DYNAMIC_LINK_SCHEME || "https",
+              host: process.env.DYNAMIC_LINK_DOMAIN,
               pathPrefix: "/",
             },
           ],
@@ -50,10 +52,12 @@ export default {
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.ACCESS_BACKGROUND_LOCATION",
       ],
-      package: "com.maksymilianorg.firebrigade",
+      package: process.env.PACKAGE_NAME,
     },
     ios: {
-      associatedDomains: ["applinks:https://firebrigade.page.link"],
+      associatedDomains: [
+        `applinks:${process.env.DYNAMIC_LINK_SCHEME}://${process.env.DYNAMIC_LINK_DOMAIN}`,
+      ],
     },
   },
   name: "fire-brigade",

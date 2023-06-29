@@ -55,7 +55,8 @@ web-build/
 dist/
 
 # Services
-google-services-dev.json
+google-services.json
+android/app/google-services.json
 
 # Secrets
 .env

@@ -19,7 +19,7 @@ keytool -list -v -alias androiddebugkey -keystore ./android/app/debug.keystore
 
 1. Copy the SHA-1
 2. Enter it in project of firebase console then
-3. Download the `google-services.json` file and save it as `google-services-dev.json` in the main folder
+3. Download the `google-services.json` file and save it in the main folder
 4. Run `npm run rebuild`
 
 ### Setup EAS Secrets
@@ -28,8 +28,8 @@ keytool -list -v -alias androiddebugkey -keystore ./android/app/debug.keystore
 # Importing environment variables from a .env file
 eas secret:push --scope project --env-file ./.env --force
 
-# Upload google-services-dev.json to EAS
-eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services-dev.json --force
+# Upload google-services.json to EAS
+eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --force
 
 # To view any existing secrets for this project, run
 eas secret:list
