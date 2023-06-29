@@ -47,6 +47,7 @@ export const SignInWithEmailAndPassword: FC = () => {
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
+    setError("");
     setLoading(true);
     let error = await createUserWithEmailAndPassword(email, password);
     if (error && error.code === ErrorCode.EMAIL_ALREADY_IN_USE) {

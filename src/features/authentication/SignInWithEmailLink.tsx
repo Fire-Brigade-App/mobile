@@ -19,6 +19,7 @@ export const SignInWithEmailLink: FC = () => {
   const [success, setSuccess] = useState("");
 
   const sendSignInLink = async (email: string) => {
+    setError("");
     setLoading(true);
 
     const actionCodeSettings = {
