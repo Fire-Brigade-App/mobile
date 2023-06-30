@@ -2,7 +2,7 @@ import "dotenv/config";
 
 export default {
   expo: {
-    name: "fire-brigade",
+    name: "Fire Brigade",
     slug: "fire-brigade",
     version: "0.1.0",
     assetBundlePatterns: ["**/*"],
@@ -60,5 +60,5 @@ export default {
       ],
     },
   },
-  name: "fire-brigade",
+  name: "Fire Brigade",
 };
