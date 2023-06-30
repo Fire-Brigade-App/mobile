@@ -29,7 +29,12 @@ export default {
       ],
       ["@react-native-google-signin/google-signin"],
     ],
+    icon: "./src/assets/icon.png",
     android: {
+      adaptiveIcon: {
+        foregroundImage: "./src/assets/adaptive-icon.png",
+        backgroundColor: "#ffffff",
+      },
       googleServicesFile:
         process.env.GOOGLE_SERVICES_JSON ?? "./google-services.json",
       intentFilters: [
