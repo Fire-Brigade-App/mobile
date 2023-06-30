@@ -1,6 +1,6 @@
 import messaging from "@react-native-firebase/messaging";
-import saveToken from "../api/saveToken";
 import { Alert } from "react-native";
+import { storeData } from "./asyncStorage";
 
 /** iOS - Requesting permissions
  * @link https://rnfirebase.io/messaging/usage#ios---requesting-permissions
@@ -29,8 +29,7 @@ export const registerMessageHandler = () => {
     messaging()
       .getToken()
       .then(async (token) => {
-        console.log("Run");
-        await saveToken(token);
+        await storeData("fcmToken", token);
       });
   } else {
     console.log("Request messaging permission error");

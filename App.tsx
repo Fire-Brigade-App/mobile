@@ -14,12 +14,13 @@ import { Screen } from "./src/features/screen/Screen";
 import { Loader } from "./src/features/loader/Loader";
 import { Login } from "./src/features/authentication/Login";
 import { Logout } from "./src/features/authentication/Logout";
+import { UserDataForm } from "./src/features/authentication/UserDataForm";
 
 defineLocationTask();
 defineBackgroundFetchTask();
 
 const AppRoot: FC = () => {
-  const { initializing, user } = useLogin();
+  const { initializing, user, userData } = useLogin();
   const [isUserTracked, setIsUserTracked] = useState(false);
 
   useEffect(() => {
@@ -32,6 +33,8 @@ const AppRoot: FC = () => {
 
   if (!user) return <Login />;
 
+  if (!userData) return <UserDataForm user={user} />;
+
   return (
     <Screen>
       <View style={styles.map}>
@@ -43,6 +46,11 @@ const AppRoot: FC = () => {
           setIsUserTracked={setIsUserTracked}
         />
         <Text>Welcome {user.email}</Text>
+        <Text>UID: {user.uid}</Text>
+        <Text>
+          Name: {userData.firstName} {userData.lastName}
+        </Text>
+        <Text>Brigades: {JSON.stringify(userData.brigades)}</Text>
         <Logout />
         <View style={styles.list}></View>
       </View>

@@ -10,7 +10,8 @@ import {
 import auth from "@react-native-firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BUNDLE_ID = "com.maksymilianorg.firebrigade";
+const PACKAGE_NAME = process.env.PACKAGE_NAME;
+const DYNAMIC_LINK = `${process.env.DYNAMIC_LINK_SCHEME}://${process.env.DYNAMIC_LINK_DOMAIN}`;
 
 export const SignInWithEmailLink: FC = () => {
   const [email, setEmail] = useState("");
@@ -25,12 +26,12 @@ export const SignInWithEmailLink: FC = () => {
     const actionCodeSettings = {
       handleCodeInApp: true,
       // URL must be whitelisted in the Firebase Console.
-      url: "https://firebrigade.page.link",
+      url: DYNAMIC_LINK,
       iOS: {
-        bundleId: BUNDLE_ID,
+        bundleId: PACKAGE_NAME,
       },
       android: {
-        packageName: BUNDLE_ID,
+        packageName: PACKAGE_NAME,
         installApp: false,
         minimumVersion: "12",
       },
