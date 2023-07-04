@@ -6,7 +6,7 @@ import {
   unsubscribeMessageHandler,
 } from "../../utils/notifications";
 import { Map } from "../../features/map/Map";
-import { TrackingStatus } from "../../features/tracking-status/TrackingStatus";
+import { User } from "../../features/tracking-status/TrackingStatus";
 import { Screen } from "../../features/screen/Screen";
 import { useAuth } from "../../features/authentication/auth";
 import { Loader } from "../../features/loader/Loader";
@@ -31,7 +31,7 @@ const Home: FC = () => {
         <Map isUserTracked={isUserTracked} />
       </View>
       <View style={styles.content}>
-        <TrackingStatus
+        <User
           isUserTracked={isUserTracked}
           setIsUserTracked={setIsUserTracked}
         />
