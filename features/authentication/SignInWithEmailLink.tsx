@@ -77,7 +77,11 @@ export const SignInWithEmailLink: FC = () => {
           {loading ? (
             <ActivityIndicator size="large" />
           ) : (
-            <Button title="Login" onPress={() => sendSignInLink(email)} />
+            <Button
+              disabled={!email}
+              title="Login"
+              onPress={() => sendSignInLink(email)}
+            />
           )}
         </>
       )}

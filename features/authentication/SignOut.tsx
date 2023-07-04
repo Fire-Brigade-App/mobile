@@ -1,19 +1,13 @@
 import React, { FC, useState } from "react";
-import auth from "@react-native-firebase/auth";
 import { ActivityIndicator, Button } from "react-native";
+import { signOut } from "./auth";
 
-const logout = async () => {
-  return auth()
-    .signOut()
-    .then(() => console.log("User signed out!"));
-};
-
-export const Logout: FC = () => {
+export const SignOut: FC = () => {
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
     setLoading(true);
-    await logout();
+    await signOut();
     setLoading(false);
   };
 

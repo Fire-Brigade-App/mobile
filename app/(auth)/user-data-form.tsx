@@ -12,8 +12,9 @@ import {
 import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
-import { getData } from "../../utils/asyncStorage";
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { useAuth } from "../../features/authentication/auth";
+import { Loader } from "../../features/loader/Loader";
+import { useFcmToken } from "../../utils/notifications";
 
 interface Brigade {
   name: string;
@@ -141,11 +142,10 @@ const saveUserData = async (
   return brigadeDocRef;
 };
 
-export const UserDataForm: FC<{ user: FirebaseAuthTypes.User }> = ({
-  user,
-}) => {
-  const [fcmToken, setFcmToken] = useState("");
+const UserDataForm: FC = () => {
+  const { initializing, user } = useAuth();
   const userUid = user.uid;
+  const { fcmToken } = useFcmToken();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -224,19 +224,9 @@ export const UserDataForm: FC<{ user: FirebaseAuthTypes.User }> = ({
     };
   }, [searchBrigade]);
 
-  useEffect(() => {
-    let didCancel = false;
-    const getFcmToken = async () => {
-      const token = await getData("fcmToken");
-      if (!didCancel) setFcmToken(token);
-    };
-
-    getFcmToken();
-
-    return () => {
-      didCancel = true;
-    };
-  }, []);
+  if (initializing) {
+    return <Loader />;
+  }
 
   return (
     <View style={styles.form}>
@@ -386,3 +376,5 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
+
+export default UserDataForm;

@@ -1,13 +1,13 @@
 import React, { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
-import { Screen } from "../screen/Screen";
-import { GoogleSigninButton } from "./GoogleSignin";
+import { Screen } from "../../features/screen/Screen";
+import { GoogleSigninButton } from "../../features/authentication/GoogleSignin";
 // import { SignInWithEmailAndPassword } from "./SignInWithEmailAndPassword";
-import { SignInWithEmailLink } from "./SignInWithEmailLink";
-import { EmailLinkHandler } from "./EmailLinkHandler";
+import { SignInWithEmailLink } from "../../features/authentication/SignInWithEmailLink";
+import { EmailLinkHandler } from "../../features/authentication/EmailLinkHandler";
 
-export const Login: FC = () => {
+const SignIn: FC = () => {
   return (
     <Screen>
       <View style={styles.form}>
@@ -58,10 +58,11 @@ const styles = StyleSheet.create({
     borderBottomColor: "#DDDDDD",
     width: "100%",
     height: 30,
-    // backgroundColor: "red",
   },
   google: {
     alignItems: "center",
     marginTop: 25,
   },
 });
+
+export default SignIn;

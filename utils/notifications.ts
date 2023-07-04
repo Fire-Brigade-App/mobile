@@ -1,6 +1,7 @@
 import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
-import { storeData } from "./asyncStorage";
+import { getData, storeData } from "./asyncStorage";
+import { useEffect, useState } from "react";
 
 /** iOS - Requesting permissions
  * @link https://rnfirebase.io/messaging/usage#ios---requesting-permissions
@@ -61,3 +62,23 @@ export const unsubscribeMessageHandler = messaging().onMessage(
     Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
   }
 );
+
+export const useFcmToken = () => {
+  const [fcmToken, setFcmToken] = useState("");
+
+  useEffect(() => {
+    let didCancel = false;
+    const getFcmToken = async () => {
+      const token = await getData("fcmToken");
+      if (!didCancel) setFcmToken(token);
+    };
+
+    getFcmToken();
+
+    return () => {
+      didCancel = true;
+    };
+  }, []);
+
+  return { fcmToken };
+};

@@ -7,15 +7,12 @@ import {
 } from "../../utils/notifications";
 import { Map } from "../../features/map/Map";
 import { TrackingStatus } from "../../features/tracking-status/TrackingStatus";
-import { useLogin } from "../../features/authentication/useLogin";
 import { Screen } from "../../features/screen/Screen";
+import { useAuth } from "../../features/authentication/auth";
 import { Loader } from "../../features/loader/Loader";
-import { Login } from "../../features/authentication/Login";
-import { Logout } from "../../features/authentication/Logout";
-import { UserDataForm } from "../../features/authentication/UserDataForm";
 
 const Home: FC = () => {
-  const { initializing, user, userData } = useLogin();
+  const { user } = useAuth();
   const [isUserTracked, setIsUserTracked] = useState(false);
 
   useEffect(() => {
@@ -24,11 +21,9 @@ const Home: FC = () => {
     return unsubscribeMessageHandler;
   }, []);
 
-  if (initializing) return <Loader />;
-
-  if (!user) return <Login />;
-
-  if (!userData) return <UserDataForm user={user} />;
+  if (!user) {
+    return <Loader />;
+  }
 
   return (
     <Screen>
@@ -40,13 +35,6 @@ const Home: FC = () => {
           isUserTracked={isUserTracked}
           setIsUserTracked={setIsUserTracked}
         />
-        <Text>Welcome {user.email}</Text>
-        <Text>UID: {user.uid}</Text>
-        <Text>
-          Name: {userData.firstName} {userData.lastName}
-        </Text>
-        <Text>Brigades: {JSON.stringify(userData.brigades)}</Text>
-        <Logout />
         <View style={styles.list}></View>
       </View>
       <StatusBar style="auto" />
