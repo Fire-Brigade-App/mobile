@@ -20,7 +20,6 @@ export const useLogin = () => {
   // Handle user state changes
   const onAuthStateChanged = (user: FirebaseAuthTypes.User) => {
     setUser(user);
-    if (initializing) setInitializing(false);
   };
 
   useEffect(() => {
@@ -30,12 +29,17 @@ export const useLogin = () => {
 
   useEffect(() => {
     let didCancel = false;
+
     const fetchUserData = async (user: FirebaseAuthTypes.User) => {
+      if (!initializing) setInitializing(true);
       const userData = await getUserData(user);
       if (!didCancel) setUserData(userData);
     };
 
     user && fetchUserData(user);
+
+    if (initializing) setInitializing(false);
+
     return () => {
       didCancel = true;
     };

@@ -1,11 +1,11 @@
-import { registerRootComponent } from 'expo';
-import { registerBackgroundMessageHandler } from './src/utils/notifications';
-import App from './App';
+import "expo-router/entry";
+import { registerBackgroundMessageHandler } from "./utils/notifications";
+import { defineLocationTask } from "./utils/location";
+import { defineBackgroundFetchTask } from "./utils/backgroundFetch";
 
 // Register handler for Background & Quit state messages
 registerBackgroundMessageHandler();
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+// Define global tasks
+defineLocationTask();
+defineBackgroundFetchTask();

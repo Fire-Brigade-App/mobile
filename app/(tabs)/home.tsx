@@ -1,25 +1,20 @@
 import React, { useState, useEffect, FC } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { defineLocationTask } from "./src/utils/location";
-import { defineBackgroundFetchTask } from "./src/utils/backgroundFetch";
 import {
   registerMessageHandler,
   unsubscribeMessageHandler,
-} from "./src/utils/notifications";
-import { Map } from "./src/features/map/Map";
-import { TrackingStatus } from "./src/features/tracking-status/TrackingStatus";
-import { useLogin } from "./src/features/authentication/useLogin";
-import { Screen } from "./src/features/screen/Screen";
-import { Loader } from "./src/features/loader/Loader";
-import { Login } from "./src/features/authentication/Login";
-import { Logout } from "./src/features/authentication/Logout";
-import { UserDataForm } from "./src/features/authentication/UserDataForm";
+} from "../../utils/notifications";
+import { Map } from "../../features/map/Map";
+import { TrackingStatus } from "../../features/tracking-status/TrackingStatus";
+import { useLogin } from "../../features/authentication/useLogin";
+import { Screen } from "../../features/screen/Screen";
+import { Loader } from "../../features/loader/Loader";
+import { Login } from "../../features/authentication/Login";
+import { Logout } from "../../features/authentication/Logout";
+import { UserDataForm } from "../../features/authentication/UserDataForm";
 
-defineLocationTask();
-defineBackgroundFetchTask();
-
-const AppRoot: FC = () => {
+const Home: FC = () => {
   const { initializing, user, userData } = useLogin();
   const [isUserTracked, setIsUserTracked] = useState(false);
 
@@ -80,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppRoot;
+export default Home;

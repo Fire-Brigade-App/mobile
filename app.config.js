@@ -5,6 +5,10 @@ export default {
     name: "Fire Brigade",
     slug: "fire-brigade",
     version: "0.1.0",
+    scheme: "acme",
+    // web: {
+    //   bundler: "metro",
+    // },
     assetBundlePatterns: ["**/*"],
     extra: {
       eas: {
@@ -29,10 +33,10 @@ export default {
       ],
       ["@react-native-google-signin/google-signin"],
     ],
-    icon: "./src/assets/icon.png",
+    icon: "./app/assets/icon.png",
     android: {
       adaptiveIcon: {
-        foregroundImage: "./src/assets/adaptive-icon.png",
+        foregroundImage: "./app/assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
       googleServicesFile:

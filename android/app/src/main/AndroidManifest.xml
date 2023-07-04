@@ -34,6 +34,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="com.maksymilianorg.firebrigade"/>
         <data android:scheme="exp+fire-brigade"/>
+        <data android:scheme="fire-brigade"/>
       </intent-filter>
       <intent-filter android:autoVerify="true" data-generated="true">
         <action android:name="android.intent.action.VIEW"/>

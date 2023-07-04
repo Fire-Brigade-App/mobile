@@ -43,6 +43,11 @@ export const unregisterBackgroundFetchAsync = async () => {
 
 export const isBackgroundFetchTaskRegistered = async () => {
   const status = await BackgroundFetch.getStatusAsync();
-  const isTaskRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK);
-  return status === BackgroundFetch.BackgroundFetchStatus.Available && isTaskRegistered;
+  const isTaskRegistered = await TaskManager.isTaskRegisteredAsync(
+    BACKGROUND_FETCH_TASK
+  );
+  return (
+    status === BackgroundFetch.BackgroundFetchStatus.Available &&
+    isTaskRegistered
+  );
 };
