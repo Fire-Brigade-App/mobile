@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from "react";
+import React, { FC, useEffect } from "react";
 import {
   isBackgroundFetchTaskRegistered,
   registerBackgroundFetchAsync,
@@ -11,13 +11,9 @@ import {
 } from "../../utils/location";
 import { StyleSheet, Switch, Text, View } from "react-native";
 import { useAuth } from "../authentication/auth";
+import User from "./User";
 
-enum UserMode {
-  BUSY, // red
-  STANDBY, // StandByState color,
-}
-
-enum UserStatus {
+export enum Status {
   // calculated time if user is in standby mode
   NEAR = "near", // green <5 min
   FAR = "far", // yellow 5<=10 min
@@ -29,6 +25,10 @@ enum UserStatus {
   // if last user update was in standby mode
   OFFLINE = "offline", // grey - no updates from 1<24 h
   INACTIVE = "inactive", // black - no updates from >24 h
+
+  //
+  CANDIDATE = "candidate",
+  SUSPENDED = "suspended",
 }
 
 interface IUserStatus {
@@ -36,31 +36,12 @@ interface IUserStatus {
   setIsUserTracked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const formatTime = (time: string) => {
-  if (time) {
-    const hms = time.split(":");
-    const h = Number(hms[0]) ? `${hms[0]} h` : "";
-    const m = Number(hms[1]) ? `${hms[1]} min` : "";
-    const s = Number(hms[2]) ? `${hms[2]} s` : "";
-    return [h, m, s].filter((x) => x).join(" ");
-  }
-
-  return "";
-};
-
-export const User: FC<IUserStatus> = ({ isUserTracked, setIsUserTracked }) => {
+export const UserStatus: FC<IUserStatus> = ({
+  isUserTracked,
+  setIsUserTracked,
+}) => {
   const { userData } = useAuth();
-
-  const time = useMemo(
-    () => (userData && userData.time ? formatTime(userData.time) : ""),
-    [userData]
-  );
-
-  const styleStatus = useMemo(() => {
-    return userData && userData.status
-      ? styles[`${userData.status}Status`]
-      : styles.blankStatus;
-  }, [userData]);
+  const brigadeId = userData ? Object.keys(userData?.brigades)[0] : null;
 
   const checkTrackingStatus = async () => {
     const isBackgroundFetchActive = await isBackgroundFetchTaskRegistered();
@@ -92,13 +73,7 @@ export const User: FC<IUserStatus> = ({ isUserTracked, setIsUserTracked }) => {
     <View style={styles.trackingStatus}>
       <View style={styles.textContainer}>
         {userData && (
-          <View style={styles.user}>
-            <View style={[styles.status, styleStatus]}></View>
-            <Text>
-              {userData.firstName} {userData.lastName}
-            </Text>
-            {Boolean(time) && <Text style={styles.time}>{time}</Text>}
-          </View>
+          <User userData={userData} brigadeId={brigadeId} showDetails={false} />
         )}
       </View>
       <View style={styles.switch}>
@@ -128,50 +103,6 @@ const styles = StyleSheet.create({
     margin: 10,
     flex: 1,
   },
-  user: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  status: {
-    marginRight: 8,
-    width: 12,
-    height: 12,
-    borderRadius: 8,
-  },
-  nearStatus: {
-    backgroundColor: "#3CB371",
-  },
-  farStatus: {
-    backgroundColor: "#FFD700",
-  },
-  outStatus: {
-    backgroundColor: "#D2691E",
-  },
-  busyStatus: {
-    backgroundColor: "#DC143C",
-  },
-  offlineStatus: {
-    backgroundColor: "#778899",
-  },
-  inactiveStatus: {
-    backgroundColor: "#222222",
-  },
-  blankStatus: {
-    backgroundColor: "transparent",
-  },
-  time: {
-    marginLeft: 8,
-    color: "#3CB371",
-    borderColor: "#3CB371",
-    textTransform: "uppercase",
-    fontSize: 10,
-    borderWidth: 1,
-    paddingTop: 3,
-    paddingHorizontal: 6,
-    borderRadius: 4,
-    marginRight: 10,
-  },
-
   switch: {
     justifyContent: "space-between",
     flexDirection: "row",

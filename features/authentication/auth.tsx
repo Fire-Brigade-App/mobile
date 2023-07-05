@@ -88,7 +88,7 @@ export const AuthProvider = (props) => {
           if (useData) {
             setUserData(useData);
             // Stop listening for updates after initial update user data
-            subscriber();
+            // subscriber();
           }
         });
     }

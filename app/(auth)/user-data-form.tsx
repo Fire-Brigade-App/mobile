@@ -15,6 +15,7 @@ import firestore, {
 import { useAuth } from "../../features/authentication/auth";
 import { Loader } from "../../features/loader/Loader";
 import { useFcmToken } from "../../utils/notifications";
+import { Status } from "../../features/status/UserStatus";
 
 interface Brigade {
   name: string;
@@ -101,13 +102,26 @@ interface UserDataToSave {
   brigade: BrigadeWithUid;
 }
 
-interface User {
+export interface User {
   fcmToken: string;
   firstName: string;
   lastName: string;
-  brigades: string[];
-  status: string;
+  brigades: {
+    [brigadeId: string]: {
+      status: Status;
+      time: string;
+      roles: UserRole[];
+    };
+  };
   location: FirebaseFirestoreTypes.GeoPoint;
+  updated: FirebaseFirestoreTypes.Timestamp;
+}
+
+export enum UserRole {
+  FIREFIGHTER = "firefighter",
+  DRIVER = "driver",
+  COMMANDER = "commander",
+  PARAMEDIC = "paramedic",
 }
 
 const saveUserData = async (
@@ -129,9 +143,15 @@ const saveUserData = async (
     fcmToken,
     firstName,
     lastName,
-    brigades: [brigadeId],
-    status: "",
+    brigades: {
+      [brigadeId]: {
+        status: Status.OFFLINE,
+        time: "0:0:0",
+        roles: [UserRole.FIREFIGHTER],
+      },
+    },
     location: new firestore.GeoPoint(0, 0),
+    updated: firestore.Timestamp.fromDate(new Date()),
   };
 
   const brigadeDocRef = await firestore()

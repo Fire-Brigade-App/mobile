@@ -1,19 +1,22 @@
 import React, { useState, useEffect, FC } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import {
   registerMessageHandler,
   unsubscribeMessageHandler,
 } from "../../utils/notifications";
 import { Map } from "../../features/map/Map";
-import { User } from "../../features/tracking-status/TrackingStatus";
+import { UserStatus } from "../../features/status/UserStatus";
 import { Screen } from "../../features/screen/Screen";
 import { useAuth } from "../../features/authentication/auth";
 import { Loader } from "../../features/loader/Loader";
+import BrigadeStatus from "../../features/status/BrigadeStatus";
 
 const Home: FC = () => {
-  const { user } = useAuth();
+  const { user, userData } = useAuth();
   const [isUserTracked, setIsUserTracked] = useState(false);
+  // TODO: handle more than one brigade for the user
+  const brigadeId = userData ? Object.keys(userData?.brigades)[0] : null;
 
   useEffect(() => {
     registerMessageHandler();
@@ -31,11 +34,13 @@ const Home: FC = () => {
         <Map isUserTracked={isUserTracked} />
       </View>
       <View style={styles.content}>
-        <User
+        <UserStatus
           isUserTracked={isUserTracked}
           setIsUserTracked={setIsUserTracked}
         />
-        <View style={styles.list}></View>
+        <View style={styles.brigadeStatus}>
+          <BrigadeStatus brigadeId={brigadeId} />
+        </View>
       </View>
       <StatusBar style="auto" />
     </Screen>
@@ -55,10 +60,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: "stretch",
   },
-  trackingStatus: {
-    flex: 1,
-  },
-  list: {
+  brigadeStatus: {
     flex: 1,
   },
 });
