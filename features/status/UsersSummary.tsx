@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { FC } from "react";
-import { Status } from "./UserStatus";
-import { User, UserRole } from "../../app/(auth)/user-data-form";
+import { UserData } from "../../data/UserData";
+import { Status } from "../../constants/status";
+import { Role } from "../../constants/role";
 
-const UsersSummary: FC<{ users: User[]; brigadeId: string }> = ({
+const UsersSummary: FC<{ users: UserData[]; brigadeId: string }> = ({
   users,
   brigadeId,
 }) => {
@@ -12,15 +13,15 @@ const UsersSummary: FC<{ users: User[]; brigadeId: string }> = ({
   );
 
   const commanders = firefighters.filter((user) =>
-    user.brigades[brigadeId].roles.includes(UserRole.COMMANDER)
+    user.brigades[brigadeId].roles.includes(Role.COMMANDER)
   );
 
   const drivers = firefighters.filter((user) =>
-    user.brigades[brigadeId].roles.includes(UserRole.DRIVER)
+    user.brigades[brigadeId].roles.includes(Role.DRIVER)
   );
 
   const paramedics = firefighters.filter((user) =>
-    user.brigades[brigadeId].roles.includes(UserRole.PARAMEDIC)
+    user.brigades[brigadeId].roles.includes(Role.PARAMEDIC)
   );
 
   return (

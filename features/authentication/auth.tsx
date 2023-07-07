@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRouter, useSegments } from "expo-router";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import { UserData } from "../../data/UserData";
 
 const getUserData = async (user: FirebaseAuthTypes.User) => {
   const userData = await firestore().collection("users").doc(user.uid).get();
@@ -44,23 +45,26 @@ const useProtectedRoute = (user, userData) => {
       ) {
         // Redirect to the sign-in page.
         router.replace("/sign-in");
-      } else if (user && !userData) {
-        router.replace("/user-data-form");
+      } else if (user && (!userData?.firstName || !userData?.lastName)) {
+        router.replace("/fill-name");
+      } else if (user && !userData?.brigades) {
+        router.replace("/choose-brigade");
       } else if (user && inAuthGroup) {
         // Redirect away from the sign-in page.
         router.replace("/home");
       }
-    }, 200);
+    }, 1000);
 
     return () => clearTimeout(timer.current);
-  }, [user, userData, segments]);
+  }, [user, userData]);
 };
 
 export const AuthProvider = (props) => {
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<FirebaseAuthTypes.User>();
-  const [userData, setUserData] = useState(null);
+  const [user, setUser] = useState<FirebaseAuthTypes.User>(null);
+  const [userData, setUserData] = useState<UserData>(null);
+  const [brigadeId, setBrigadeId] = useState<string>(null);
 
   useProtectedRoute(user, userData);
 
@@ -83,7 +87,7 @@ export const AuthProvider = (props) => {
         .collection("users")
         .doc(user.uid)
         .onSnapshot((documentSnapshot) => {
-          const useData = documentSnapshot.data();
+          const useData = documentSnapshot.data() as UserData;
           console.log("User data: ", useData);
           if (useData) {
             setUserData(useData);
@@ -103,7 +107,7 @@ export const AuthProvider = (props) => {
 
     const fetchUserData = async (user: FirebaseAuthTypes.User) => {
       const userData = await getUserData(user);
-      if (!didCancel) setUserData(userData);
+      if (!didCancel) setUserData(userData as UserData);
       setInitializing(false);
     };
 
@@ -114,8 +118,15 @@ export const AuthProvider = (props) => {
     };
   }, [user]);
 
+  useEffect(() => {
+    const brigadeId = userData?.brigades
+      ? Object.keys(userData?.brigades)[0]
+      : null;
+    setBrigadeId(brigadeId);
+  }, [userData?.brigades]);
+
   return (
-    <AuthContext.Provider value={{ initializing, user, userData }}>
+    <AuthContext.Provider value={{ initializing, user, userData, brigadeId }}>
       {props.children}
     </AuthContext.Provider>
   );

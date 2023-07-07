@@ -1,8 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { FC, useMemo, useState } from "react";
-import { User as IUser } from "../../app/(auth)/user-data-form";
 import Roles from "./Roles";
 import Updated from "./Updated";
+import { UserData } from "../../data/UserData";
 
 const formatTime = (time: string) => {
   if (time) {
@@ -16,7 +16,7 @@ const formatTime = (time: string) => {
 };
 
 const User: FC<{
-  userData: IUser;
+  userData: UserData;
   brigadeId: string;
   showDetails?: boolean;
 }> = ({ userData, brigadeId, showDetails = true }) => {

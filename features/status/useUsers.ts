@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
-import { Status } from "./UserStatus";
-import { User } from "../../app/(auth)/user-data-form";
+import { UserData } from "../../data/UserData";
+import { Status } from "../../constants/status";
 
 const orderedStatuses = [
   Status.NEAR,
@@ -12,11 +12,11 @@ const orderedStatuses = [
   Status.INACTIVE,
 ];
 
-const getStatusIndex = (user: User, brigadeId: string) => {
+const getStatusIndex = (user: UserData, brigadeId: string) => {
   return orderedStatuses.indexOf(user.brigades[brigadeId].status);
 };
 
-const getTime = (user: User, brigadeId: string) => {
+const getTime = (user: UserData, brigadeId: string) => {
   return parseInt(
     user.brigades[brigadeId].time
       .split(":")
@@ -33,7 +33,9 @@ export const useUsers = (brigadeId: string) => {
       .collection("users")
       .where(`brigades.${brigadeId}`, "!=", "undefined")
       .onSnapshot((documentSnapshot) => {
-        const users = documentSnapshot.docs.map((doc) => doc.data() as User);
+        const users = documentSnapshot.docs.map(
+          (doc) => doc.data() as UserData
+        );
         const sortedUsers = users.sort(
           (a, b) =>
             getStatusIndex(a, brigadeId) - getStatusIndex(b, brigadeId) ||

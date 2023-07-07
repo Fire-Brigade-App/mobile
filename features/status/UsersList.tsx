@@ -1,9 +1,9 @@
 import { FlatList, StyleSheet, View } from "react-native";
 import React, { FC } from "react";
 import User from "./User";
-import { User as IUser } from "../../app/(auth)/user-data-form";
+import { UserData } from "../../data/UserData";
 
-const UsersList: FC<{ users: IUser[]; brigadeId: string }> = ({
+const UsersList: FC<{ users: UserData[]; brigadeId: string }> = ({
   users,
   brigadeId,
 }) => {

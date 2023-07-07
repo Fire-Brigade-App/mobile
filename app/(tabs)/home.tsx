@@ -1,30 +1,21 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, FC } from "react";
 import { StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import {
-  registerMessageHandler,
-  unsubscribeMessageHandler,
-} from "../../utils/notifications";
 import { Map } from "../../features/map/Map";
 import { UserStatus } from "../../features/status/UserStatus";
 import { Screen } from "../../features/screen/Screen";
 import { useAuth } from "../../features/authentication/auth";
 import { Loader } from "../../features/loader/Loader";
 import BrigadeStatus from "../../features/status/BrigadeStatus";
+import { useRegisterMessageHandler } from "../../utils/notifications";
 
 const Home: FC = () => {
-  const { user, userData } = useAuth();
+  const { brigadeId } = useAuth();
   const [isUserTracked, setIsUserTracked] = useState(false);
-  // TODO: handle more than one brigade for the user
-  const brigadeId = userData ? Object.keys(userData?.brigades)[0] : null;
 
-  useEffect(() => {
-    registerMessageHandler();
+  useRegisterMessageHandler();
 
-    return unsubscribeMessageHandler;
-  }, []);
-
-  if (!user) {
+  if (!brigadeId) {
     return <Loader />;
   }
 

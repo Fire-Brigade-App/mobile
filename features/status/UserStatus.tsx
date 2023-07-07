@@ -13,24 +13,6 @@ import { StyleSheet, Switch, Text, View } from "react-native";
 import { useAuth } from "../authentication/auth";
 import User from "./User";
 
-export enum Status {
-  // calculated time if user is in standby mode
-  NEAR = "near", // green <5 min
-  FAR = "far", // yellow 5<=10 min
-  OUT = "out", // orange >10 min
-
-  // user is in busy mode
-  BUSY = "busy", // red
-
-  // if last user update was in standby mode
-  OFFLINE = "offline", // grey - no updates from 1<24 h
-  INACTIVE = "inactive", // black - no updates from >24 h
-
-  //
-  CANDIDATE = "candidate",
-  SUSPENDED = "suspended",
-}
-
 interface IUserStatus {
   isUserTracked: boolean;
   setIsUserTracked: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,8 +22,7 @@ export const UserStatus: FC<IUserStatus> = ({
   isUserTracked,
   setIsUserTracked,
 }) => {
-  const { userData } = useAuth();
-  const brigadeId = userData ? Object.keys(userData?.brigades)[0] : null;
+  const { userData, brigadeId } = useAuth();
 
   const checkTrackingStatus = async () => {
     const isBackgroundFetchActive = await isBackgroundFetchTaskRegistered();
@@ -72,7 +53,7 @@ export const UserStatus: FC<IUserStatus> = ({
   return (
     <View style={styles.trackingStatus}>
       <View style={styles.textContainer}>
-        {userData && (
+        {userData && brigadeId && (
           <User userData={userData} brigadeId={brigadeId} showDetails={false} />
         )}
       </View>

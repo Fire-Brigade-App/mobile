@@ -63,6 +63,14 @@ export const unsubscribeMessageHandler = messaging().onMessage(
   }
 );
 
+export const useRegisterMessageHandler = () => {
+  useEffect(() => {
+    registerMessageHandler();
+
+    return unsubscribeMessageHandler;
+  }, []);
+};
+
 export const useFcmToken = () => {
   const [fcmToken, setFcmToken] = useState("");
 

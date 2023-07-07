@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
-import { ActivityIndicator, Button } from "react-native";
 import { signOut } from "./auth";
+import TextButton from "../../components/TextButton";
 
 export const SignOut: FC = () => {
   const [loading, setLoading] = useState(false);
@@ -13,11 +13,7 @@ export const SignOut: FC = () => {
 
   return (
     <>
-      {loading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <Button onPress={handleLogout} title="Logout" />
-      )}
+      <TextButton loading={loading} onPress={handleLogout} title="Sign out" />
     </>
   );
 };

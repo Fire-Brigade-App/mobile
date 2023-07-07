@@ -1,0 +1,369 @@
+import React, { FC, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import firestore from "@react-native-firebase/firestore";
+import { useAuth } from "../authentication/auth";
+import { Loader } from "../loader/Loader";
+import { inputStyle } from "../../styles/input";
+import { Brigade } from "../../data/Brigade";
+import { BrigadeStatus } from "../../constants/brigadeStatus";
+import { BrigadePermissions } from "../../constants/brigadePermissions";
+import { Role } from "../../constants/role";
+import { Status } from "../../constants/status";
+import { titleStyle } from "../../styles/title";
+import TextButton from "../../components/TextButton";
+import { SafeAreaScreen } from "../screen/SafeAreaScreen";
+import { Link } from "expo-router";
+
+interface BrigadeWithUid extends Brigade {
+  uid: string;
+}
+
+const getBrigades = async (name: string) => {
+  const brigades = firestore().collection("brigades");
+  const brigadesDocs = await brigades.where("name", "==", name).get();
+  if (brigadesDocs.size) {
+    const findings: BrigadeWithUid[] = brigadesDocs.docs.map((doc) => ({
+      ...(doc.data() as Brigade),
+      uid: doc.id,
+    }));
+    return findings;
+  }
+  return [];
+};
+
+const getBrigadeById = async (brigadeId: string) => {
+  const brigadeDocRef = await firestore()
+    .collection("brigades")
+    .doc(brigadeId)
+    .get();
+  const brigade = brigadeDocRef.data();
+  return brigade;
+};
+
+interface NewBrigadeData {
+  userUid: string;
+  brigadeName: string;
+  country: string;
+  province: string;
+  municipality: string;
+  latitude: number;
+  longitude: number;
+}
+
+const createBrigade = async (brigadeData: NewBrigadeData) => {
+  const {
+    userUid,
+    brigadeName: name,
+    country,
+    province,
+    municipality,
+    latitude,
+    longitude,
+  } = brigadeData;
+
+  const newBrigade: Brigade = {
+    name,
+    country,
+    province,
+    municipality,
+    location: new firestore.GeoPoint(Number(latitude), Number(longitude)),
+    permissions: { [userUid]: [BrigadePermissions.ADMIN] },
+    status: BrigadeStatus.STANDBY,
+    alerts: [],
+  };
+
+  const brigadeDocRef = await firestore()
+    .collection("brigades")
+    .add(newBrigade);
+
+  return brigadeDocRef;
+};
+
+const UserBrigadeForm: FC<{ isInitial?: boolean }> = ({
+  isInitial = false,
+}) => {
+  const { initializing, user, userData } = useAuth();
+  const userUid = user.uid;
+
+  const [searchBrigade, setSearchBrigade] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [brigades, setBrigades] = useState(null);
+  const [brigade, setBrigade] = useState(null);
+
+  const [isCreatingBrigade, setIsCreatingBrigade] = useState(false);
+  const [country, setCountry] = useState("");
+  const [province, setProvince] = useState("");
+  const [municipality, setMunicipality] = useState("");
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const isFormValid =
+    brigade ||
+    (isCreatingBrigade &&
+      searchBrigade &&
+      country &&
+      province &&
+      municipality &&
+      latitude &&
+      longitude);
+
+  // this component could be shown in the initial state just before signing in
+  // if the user data is not existing
+  const isNotInitialized = !!userData?.brigades;
+  const savedBrigade = isNotInitialized
+    ? Object.keys(userData?.brigades)[0]
+    : null;
+  const showSaveButton = savedBrigade !== brigade?.uid;
+  const saveButton = isInitial ? "Save" : "Next";
+
+  useEffect(() => {
+    let didCancel = false;
+    const getUserBrigade = async () => {
+      const brigadeId = Object.keys(userData?.brigades)[0];
+      const brigade = await getBrigadeById(brigadeId);
+      if (!didCancel) setBrigade({ uid: brigadeId, ...brigade });
+    };
+
+    if (userData?.brigades) {
+      getUserBrigade();
+    }
+
+    return () => {
+      didCancel = true;
+    };
+  }, [userData?.brigades]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    let brigadeId = brigade?.uid;
+    let status = Status.CANDIDATE;
+
+    if (isCreatingBrigade) {
+      const brigadeData = {
+        userUid,
+        brigadeName: searchBrigade,
+        country,
+        province,
+        municipality,
+        latitude,
+        longitude,
+      };
+
+      const brigadeDocRef = await createBrigade(brigadeData);
+      brigadeId = brigadeDocRef.id;
+      status = Status.OFFLINE;
+    }
+
+    await firestore()
+      .collection("users")
+      .doc(userUid)
+      .update({
+        brigades: {
+          [brigadeId]: {
+            roles: [Role.FIREFIGHTER],
+            status,
+            time: "0:0:0",
+          },
+        },
+      });
+
+    setIsSaving(false);
+  };
+
+  useEffect(() => {
+    let brigades = [];
+    let didCancel = false;
+    let timeout: NodeJS.Timeout;
+
+    if (!searchBrigade) {
+      setBrigades(null);
+    } else {
+      timeout = setTimeout(async () => {
+        setLoading(true);
+        brigades = await getBrigades(searchBrigade);
+        if (!didCancel) setBrigades(brigades);
+        setLoading(false);
+      }, 1500);
+    }
+
+    return () => {
+      didCancel = true;
+      clearTimeout(timeout);
+    };
+  }, [searchBrigade]);
+
+  if (initializing) {
+    return <Loader />;
+  }
+
+  return (
+    <SafeAreaScreen>
+      {!isInitial && (
+        <View style={styles.top}>
+          <Link href="/settings" asChild>
+            <TextButton title={"Back"} align="left" />
+          </Link>
+        </View>
+      )}
+      <View style={styles.content}>
+        <Text style={styles.title}>Your fire brigade</Text>
+        {/* Show text input for searcing brigades if none is selected */}
+        {!brigade && (
+          <TextInput
+            style={styles.input}
+            placeholder="fire brigade"
+            value={searchBrigade}
+            onChangeText={setSearchBrigade}
+          />
+        )}
+
+        {isCreatingBrigade ? (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="country"
+              onChangeText={setCountry}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="province"
+              onChangeText={setProvince}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="municipality"
+              onChangeText={setMunicipality}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="latitude"
+              onChangeText={setLatitude}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="longitude"
+              onChangeText={setLongitude}
+            />
+            <TextButton
+              title="Abort creation a new brigade"
+              align={"center"}
+              onPress={() => setIsCreatingBrigade(false)}
+            />
+          </>
+        ) : !!brigade ? (
+          <View style={[styles.brigadeItem, styles.brigadeSelected]}>
+            <Text>
+              {brigade.name} ({brigade.province}, {brigade.municipality})
+            </Text>
+            <Pressable onPress={() => setBrigade(null)}>
+              <AntDesign name="closecircleo" size={24} color="#2196F3" />
+            </Pressable>
+          </View>
+        ) : loading ? (
+          <ActivityIndicator size="large" />
+        ) : !!brigades && brigades.length ? (
+          <>
+            <Text style={styles.label}>
+              Choose one of the existing fire brigade:
+            </Text>
+            <FlatList
+              style={styles.brigades}
+              data={brigades}
+              keyExtractor={(item) => item.name}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={styles.brigadeItem}
+                  onPress={() => setBrigade(item)}
+                >
+                  <Text style={styles.brigadeName}>
+                    {item.name} ({item.province}, {item.municipality})
+                  </Text>
+                </Pressable>
+              )}
+            />
+            <Text>or</Text>
+            <TextButton
+              title="Create a new one"
+              align={"center"}
+              onPress={() => setIsCreatingBrigade(true)}
+            />
+          </>
+        ) : !!searchBrigade && !!brigades && !brigades.length ? (
+          <>
+            <Text style={styles.nothing}>Nothing found</Text>
+            <TextButton
+              title="Create a new fire brigade"
+              align={"right"}
+              onPress={() => setIsCreatingBrigade(true)}
+            />
+          </>
+        ) : null}
+
+        {showSaveButton && isFormValid && (
+          <TextButton
+            loading={isSaving}
+            title={saveButton}
+            disabled={!isFormValid}
+            onPress={handleSave}
+          />
+        )}
+      </View>
+    </SafeAreaScreen>
+  );
+};
+
+const styles = StyleSheet.create({
+  top: {
+    width: "100%",
+  },
+  back: {
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  content: {
+    width: "100%",
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  },
+  input: inputStyle,
+  title: titleStyle,
+  brigades: {
+    flexGrow: 0,
+  },
+  nothing: {
+    marginBottom: 15,
+  },
+  brigadeSelected: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  brigadeItem: {
+    borderColor: "#DDDDDD",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 5,
+  },
+  brigadeName: {
+    color: "#2196F3",
+  },
+  label: {
+    marginBottom: 10,
+  },
+});
+
+export default UserBrigadeForm;

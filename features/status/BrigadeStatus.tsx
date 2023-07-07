@@ -2,8 +2,8 @@ import { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import UsersList from "./UsersList";
 import UsersSummary from "./UsersSummary";
-import { Status } from "./UserStatus";
 import { useUsers } from "./useUsers";
+import { Status } from "../../constants/status";
 
 const BrigadeStatus: FC<{ brigadeId: string }> = ({ brigadeId }) => {
   const { users } = useUsers(brigadeId);

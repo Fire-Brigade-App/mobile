@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { FlatList, StyleSheet, Text } from "react-native";
-import { UserRole } from "../../app/(auth)/user-data-form";
+import { Role } from "../../constants/role";
 
 const rolesMap = {
-  [UserRole.DRIVER]: "D",
-  [UserRole.COMMANDER]: "C",
-  [UserRole.PARAMEDIC]: "M",
-  [UserRole.FIREFIGHTER]: "",
+  [Role.DRIVER]: "D",
+  [Role.COMMANDER]: "C",
+  [Role.PARAMEDIC]: "M",
+  [Role.FIREFIGHTER]: "",
 };
 
-const Roles: FC<{ roles: UserRole[] }> = ({ roles }) => {
+const Roles: FC<{ roles: Role[] }> = ({ roles }) => {
   return (
     <FlatList
       horizontal
