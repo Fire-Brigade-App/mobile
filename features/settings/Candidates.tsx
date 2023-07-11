@@ -19,6 +19,9 @@ const Candidate: FC<{
   changeStatus: (userUid: string, status: Status) => Promise<void>;
 }> = ({ userData, changeStatus }) => {
   const [loading, setLoading] = useState(false);
+  const { brigadeId } = useAuth();
+  const isSuspended =
+    userData?.brigades[brigadeId]?.status === Status.SUSPENDED;
 
   const handleChangeStatus = async (status: Status) => {
     setLoading(true);
@@ -39,9 +42,11 @@ const Candidate: FC<{
             <Pressable onPress={() => handleChangeStatus(Status.OFFLINE)}>
               <Text style={[styles.button, styles.approve]}>Approve</Text>
             </Pressable>
-            <Pressable onPress={() => handleChangeStatus(Status.SUSPENDED)}>
-              <Text style={[styles.button, styles.decline]}>Decline</Text>
-            </Pressable>
+            {!isSuspended && (
+              <Pressable onPress={() => handleChangeStatus(Status.SUSPENDED)}>
+                <Text style={[styles.button, styles.decline]}>Decline</Text>
+              </Pressable>
+            )}
           </>
         )}
       </View>
@@ -52,17 +57,29 @@ const Candidate: FC<{
 const Candidates: FC = () => {
   const { brigadeId } = useAuth();
   const [candidates, setCandidates] = useState<UserDataWithUid[]>([]);
+  const [suspended, setSuspended] = useState<UserDataWithUid[]>([]);
 
   useEffect(() => {
     const subscriber = firestore()
       .collection("users")
-      .where(`brigades.${brigadeId}.status`, "in", [Status.CANDIDATE])
+      .where(`brigades.${brigadeId}.status`, "in", [
+        Status.CANDIDATE,
+        Status.SUSPENDED,
+      ])
       .onSnapshot((documentSnapshot) => {
         const users = documentSnapshot.docs.map((doc) => ({
           uid: doc.id,
           ...(doc.data() as UserData),
         }));
-        setCandidates(users);
+
+        const candidatesUsers = users.filter(
+          (user) => user.brigades[brigadeId].status === Status.CANDIDATE
+        );
+        const suspendedUsers = users.filter(
+          (user) => user.brigades[brigadeId].status === Status.SUSPENDED
+        );
+        setCandidates(candidatesUsers);
+        setSuspended(suspendedUsers);
       });
 
     // Stop listening for updates when no longer required
@@ -92,6 +109,20 @@ const Candidates: FC = () => {
       ) : (
         <View style={styles.full}>
           <Text style={styles.nodata}>no new candidates</Text>
+        </View>
+      )}
+
+      <Text style={styles.title}>Suspended users</Text>
+      {Boolean(suspended.length) ? (
+        <FlatList
+          data={suspended}
+          renderItem={({ item }) => (
+            <Candidate userData={item} changeStatus={handleChangeStatus} />
+          )}
+        />
+      ) : (
+        <View style={styles.full}>
+          <Text style={styles.nodata}>no suspended users</Text>
         </View>
       )}
     </View>

@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import { Link, Stack } from "expo-router";
-import { titleStyle } from "../../../../styles/title";
 import { Screen } from "../../../../features/screen/Screen";
 
 const ManagementForm: FC = () => {
@@ -14,6 +13,9 @@ const ManagementForm: FC = () => {
         }}
       />
       <View style={styles.content}>
+        <Link href="/settings/management/users" style={styles.link}>
+          Users
+        </Link>
         <Link href="/settings/management/candidates" style={styles.link}>
           Candidates
         </Link>
