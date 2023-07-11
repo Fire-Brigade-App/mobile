@@ -3,8 +3,11 @@ import { StyleSheet, View } from "react-native";
 import { SignOut } from "../../../features/authentication/SignOut";
 import { Link, Stack } from "expo-router";
 import { Screen } from "../../../features/screen/Screen";
+import { useAdmin } from "../../../features/authentication/auth";
 
 const Settings: FC = () => {
+  const { isAdmin } = useAdmin();
+
   return (
     <>
       <Stack.Screen
@@ -24,9 +27,11 @@ const Settings: FC = () => {
           <Link href="/settings/user-brigade" style={styles.link}>
             Your fire brigade
           </Link>
-          <Link href="/settings/management" style={styles.link}>
-            Management
-          </Link>
+          {isAdmin && (
+            <Link href="/settings/management" style={styles.link}>
+              Management
+            </Link>
+          )}
         </View>
       </Screen>
     </>

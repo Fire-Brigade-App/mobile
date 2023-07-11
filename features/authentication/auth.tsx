@@ -3,11 +3,24 @@ import { useRouter, useSegments } from "expo-router";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { UserData } from "../../data/UserData";
+import { BrigadePermissions } from "../../constants/brigadePermissions";
 
 const getUserData = async (user: FirebaseAuthTypes.User) => {
   const userData = await firestore().collection("users").doc(user.uid).get();
   if (userData.exists) {
     const data = userData.data();
+    return data;
+  }
+  return null;
+};
+
+const getBrigadeData = async (brigadeId: string) => {
+  const brigadeData = await firestore()
+    .collection("brigades")
+    .doc(brigadeId)
+    .get();
+  if (brigadeData.exists) {
+    const data = brigadeData.data();
     return data;
   }
   return null;
@@ -19,7 +32,14 @@ export const signOut = async () => {
     .then(() => console.log("User signed out!"));
 };
 
-const AuthContext = createContext(null);
+interface IAuthContext {
+  initializing: boolean;
+  user: FirebaseAuthTypes.User;
+  userData: UserData;
+  brigadeId: string;
+}
+
+const AuthContext = createContext<IAuthContext>(null);
 
 // This hook can be used to access the user info.
 export const useAuth = () => {
@@ -57,6 +77,30 @@ const useProtectedRoute = (user, userData) => {
 
     return () => clearTimeout(timer.current);
   }, [user, userData]);
+};
+
+export const useAdmin = () => {
+  const { user, brigadeId } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(null);
+
+  useEffect(() => {
+    let didCancel = false;
+
+    const fetchBrigadeData = async (brigadeId: string) => {
+      const brigadeData = await getBrigadeData(brigadeId);
+      const permissions = brigadeData.permissions;
+      const isAdmin = permissions[user.uid]?.includes(BrigadePermissions.ADMIN);
+      if (!didCancel) setIsAdmin(isAdmin);
+    };
+
+    brigadeId && fetchBrigadeData(brigadeId);
+
+    return () => {
+      didCancel = true;
+    };
+  }, [user, brigadeId]);
+
+  return { isAdmin };
 };
 
 export const AuthProvider = (props) => {
