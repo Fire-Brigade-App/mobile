@@ -6,8 +6,7 @@ import { titleStyle } from "../../styles/title";
 import firestore from "@react-native-firebase/firestore";
 import { useFcmToken } from "../../utils/notifications";
 import TextButton from "../../components/TextButton";
-import { Link } from "expo-router";
-import { SafeAreaScreen } from "../screen/SafeAreaScreen";
+import { contentStyle } from "../../styles/content";
 
 interface UserDataToSave {
   userUid: string;
@@ -58,56 +57,34 @@ const UserName: FC<{ isInitial?: boolean }> = ({ isInitial = false }) => {
   };
 
   return (
-    <SafeAreaScreen>
-      {!isInitial && (
-        <View style={styles.top}>
-          <Link href="/settings" asChild>
-            <TextButton title={"Back"} align="left" />
-          </Link>
-        </View>
-      )}
-      <View style={styles.content}>
-        <Text style={styles.title}>Your name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="first name"
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="last name"
-          value={lastName}
-          onChangeText={setLastName}
-        />
-        <TextButton
-          loading={loading}
-          title={saveButton}
-          disabled={!isFormValid || !isFormChanged}
-          onPress={handleSave}
-        />
-      </View>
-    </SafeAreaScreen>
+    <View style={styles.content}>
+      <Text style={styles.title}>Your name</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="first name"
+        value={firstName}
+        onChangeText={setFirstName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="last name"
+        value={lastName}
+        onChangeText={setLastName}
+      />
+      <TextButton
+        loading={loading}
+        title={saveButton}
+        disabled={!isFormValid || !isFormChanged}
+        onPress={handleSave}
+      />
+    </View>
   );
 };
 
 export default UserName;
 
 const styles = StyleSheet.create({
-  top: {
-    width: "100%",
-  },
-  back: {
-    paddingHorizontal: 10,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  content: {
-    width: "100%",
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-  },
+  content: contentStyle,
   input: inputStyle,
   title: titleStyle,
 });

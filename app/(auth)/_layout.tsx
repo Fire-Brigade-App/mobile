@@ -1,5 +1,10 @@
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
+import { SafeAreaScreen } from "../../features/screen/SafeAreaScreen";
 
 export default () => {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <SafeAreaScreen>
+      <Slot />
+    </SafeAreaScreen>
+  );
 };

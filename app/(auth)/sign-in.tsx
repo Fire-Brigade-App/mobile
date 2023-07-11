@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
-import { Screen } from "../../features/screen/Screen";
 import { GoogleSigninButton } from "../../features/authentication/GoogleSignin";
 // import { SignInWithEmailAndPassword } from "./SignInWithEmailAndPassword";
 import { SignInWithEmailLink } from "../../features/authentication/SignInWithEmailLink";
@@ -9,28 +8,26 @@ import { EmailLinkHandler } from "../../features/authentication/EmailLinkHandler
 
 const SignIn: FC = () => {
   return (
-    <Screen>
-      <View style={styles.form}>
-        <View style={styles.logo}>
-          <Image
-            style={styles.image}
-            source={require("../../assets/icon.png")}
-            placeholder="Fire Brigade"
-            contentFit="cover"
-            transition={1000}
-          />
-        </View>
-        <View>
-          {/* <SignInWithEmailAndPassword /> */}
-          <SignInWithEmailLink />
-        </View>
-        <View style={styles.separator}></View>
-        <View style={styles.google}>
-          <GoogleSigninButton />
-        </View>
-        <EmailLinkHandler />
+    <View style={styles.form}>
+      <View style={styles.logo}>
+        <Image
+          style={styles.image}
+          source={require("../../assets/icon.png")}
+          placeholder="Fire Brigade"
+          contentFit="cover"
+          transition={1000}
+        />
       </View>
-    </Screen>
+      <View>
+        {/* <SignInWithEmailAndPassword /> */}
+        <SignInWithEmailLink />
+      </View>
+      <View style={styles.separator}></View>
+      <View style={styles.google}>
+        <GoogleSigninButton />
+      </View>
+      <EmailLinkHandler />
+    </View>
   );
 };
 

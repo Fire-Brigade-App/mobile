@@ -31,7 +31,14 @@ export const useUsers = (brigadeId: string) => {
   useEffect(() => {
     const subscriber = firestore()
       .collection("users")
-      .where(`brigades.${brigadeId}`, "!=", "undefined")
+      .where(`brigades.${brigadeId}.status`, "in", [
+        Status.NEAR,
+        Status.FAR,
+        Status.OUT,
+        Status.BUSY,
+        Status.OFFLINE,
+        Status.INACTIVE,
+      ])
       .onSnapshot((documentSnapshot) => {
         const users = documentSnapshot.docs.map(
           (doc) => doc.data() as UserData

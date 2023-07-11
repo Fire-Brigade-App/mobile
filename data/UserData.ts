@@ -16,3 +16,7 @@ export interface UserData {
   location: FirebaseFirestoreTypes.GeoPoint;
   updated: FirebaseFirestoreTypes.Timestamp;
 }
+
+export interface UserDataWithUid extends UserData {
+  uid: string;
+}

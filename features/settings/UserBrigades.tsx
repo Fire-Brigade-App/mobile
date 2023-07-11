@@ -20,8 +20,7 @@ import { Role } from "../../constants/role";
 import { Status } from "../../constants/status";
 import { titleStyle } from "../../styles/title";
 import TextButton from "../../components/TextButton";
-import { SafeAreaScreen } from "../screen/SafeAreaScreen";
-import { Link } from "expo-router";
+import { contentStyle } from "../../styles/content";
 
 interface BrigadeWithUid extends Brigade {
   uid: string;
@@ -207,136 +206,114 @@ const UserBrigadeForm: FC<{ isInitial?: boolean }> = ({
   }
 
   return (
-    <SafeAreaScreen>
-      {!isInitial && (
-        <View style={styles.top}>
-          <Link href="/settings" asChild>
-            <TextButton title={"Back"} align="left" />
-          </Link>
-        </View>
+    <View style={styles.content}>
+      {isInitial && <Text style={styles.title}>Your fire brigade</Text>}
+      {/* Show text input for searcing brigades if none is selected */}
+      {!brigade && (
+        <TextInput
+          style={styles.input}
+          placeholder="fire brigade"
+          value={searchBrigade}
+          onChangeText={setSearchBrigade}
+        />
       )}
-      <View style={styles.content}>
-        <Text style={styles.title}>Your fire brigade</Text>
-        {/* Show text input for searcing brigades if none is selected */}
-        {!brigade && (
+
+      {isCreatingBrigade ? (
+        <>
           <TextInput
             style={styles.input}
-            placeholder="fire brigade"
-            value={searchBrigade}
-            onChangeText={setSearchBrigade}
+            placeholder="country"
+            onChangeText={setCountry}
           />
-        )}
-
-        {isCreatingBrigade ? (
-          <>
-            <TextInput
-              style={styles.input}
-              placeholder="country"
-              onChangeText={setCountry}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="province"
-              onChangeText={setProvince}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="municipality"
-              onChangeText={setMunicipality}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="latitude"
-              onChangeText={setLatitude}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="longitude"
-              onChangeText={setLongitude}
-            />
-            <TextButton
-              title="Abort creation a new brigade"
-              align={"center"}
-              onPress={() => setIsCreatingBrigade(false)}
-            />
-          </>
-        ) : !!brigade ? (
-          <View style={[styles.brigadeItem, styles.brigadeSelected]}>
-            <Text>
-              {brigade.name} ({brigade.province}, {brigade.municipality})
-            </Text>
-            <Pressable onPress={() => setBrigade(null)}>
-              <AntDesign name="closecircleo" size={24} color="#2196F3" />
-            </Pressable>
-          </View>
-        ) : loading ? (
-          <ActivityIndicator size="large" />
-        ) : !!brigades && brigades.length ? (
-          <>
-            <Text style={styles.label}>
-              Choose one of the existing fire brigade:
-            </Text>
-            <FlatList
-              style={styles.brigades}
-              data={brigades}
-              keyExtractor={(item) => item.name}
-              renderItem={({ item }) => (
-                <Pressable
-                  style={styles.brigadeItem}
-                  onPress={() => setBrigade(item)}
-                >
-                  <Text style={styles.brigadeName}>
-                    {item.name} ({item.province}, {item.municipality})
-                  </Text>
-                </Pressable>
-              )}
-            />
-            <Text>or</Text>
-            <TextButton
-              title="Create a new one"
-              align={"center"}
-              onPress={() => setIsCreatingBrigade(true)}
-            />
-          </>
-        ) : !!searchBrigade && !!brigades && !brigades.length ? (
-          <>
-            <Text style={styles.nothing}>Nothing found</Text>
-            <TextButton
-              title="Create a new fire brigade"
-              align={"right"}
-              onPress={() => setIsCreatingBrigade(true)}
-            />
-          </>
-        ) : null}
-
-        {showSaveButton && isFormValid && (
+          <TextInput
+            style={styles.input}
+            placeholder="province"
+            onChangeText={setProvince}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="municipality"
+            onChangeText={setMunicipality}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="latitude"
+            onChangeText={setLatitude}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="longitude"
+            onChangeText={setLongitude}
+          />
           <TextButton
-            loading={isSaving}
-            title={saveButton}
-            disabled={!isFormValid}
-            onPress={handleSave}
+            title="Abort creation a new brigade"
+            align={"center"}
+            onPress={() => setIsCreatingBrigade(false)}
           />
-        )}
-      </View>
-    </SafeAreaScreen>
+        </>
+      ) : !!brigade ? (
+        <View style={[styles.brigadeItem, styles.brigadeSelected]}>
+          <Text>
+            {brigade.name} ({brigade.province}, {brigade.municipality})
+          </Text>
+          <Pressable onPress={() => setBrigade(null)}>
+            <AntDesign name="closecircleo" size={24} color="#2196F3" />
+          </Pressable>
+        </View>
+      ) : loading ? (
+        <ActivityIndicator size="large" />
+      ) : !!brigades && brigades.length ? (
+        <>
+          <Text style={styles.label}>
+            Choose one of the existing fire brigade:
+          </Text>
+          <FlatList
+            style={styles.brigades}
+            data={brigades}
+            keyExtractor={(item) => item.name}
+            renderItem={({ item }) => (
+              <Pressable
+                style={styles.brigadeItem}
+                onPress={() => setBrigade(item)}
+              >
+                <Text style={styles.brigadeName}>
+                  {item.name} ({item.province}, {item.municipality})
+                </Text>
+              </Pressable>
+            )}
+          />
+          <Text>or</Text>
+          <TextButton
+            title="Create a new one"
+            align={"center"}
+            onPress={() => setIsCreatingBrigade(true)}
+          />
+        </>
+      ) : !!searchBrigade && !!brigades && !brigades.length ? (
+        <>
+          <Text style={styles.nothing}>Nothing found</Text>
+          <TextButton
+            title="Create a new fire brigade"
+            align={"right"}
+            onPress={() => setIsCreatingBrigade(true)}
+          />
+        </>
+      ) : null}
+
+      {showSaveButton && isFormValid && (
+        <TextButton
+          loading={isSaving}
+          title={saveButton}
+          disabled={!isFormValid}
+          onPress={handleSave}
+        />
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  top: {
-    width: "100%",
-  },
-  back: {
-    paddingHorizontal: 10,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  content: {
-    width: "100%",
-    flex: 1,
-    justifyContent: "center",
-    padding: 20,
-  },
+  content: contentStyle,
   input: inputStyle,
   title: titleStyle,
   brigades: {
