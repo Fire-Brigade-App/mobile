@@ -17,3 +17,4 @@ const api = async (path: string, method = "GET", data?: object) => {
 export const get = async (path: string) => api(path);
 export const post = async (path: string, data: object) =>
   api(path, "POST", data);
+export const put = async (path: string, data: object) => api(path, "PUT", data);

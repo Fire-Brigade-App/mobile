@@ -10,19 +10,37 @@ import {
   stopLocationUpdates,
 } from "../../utils/location";
 import { StyleSheet, Switch, Text, View } from "react-native";
+import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../authentication/auth";
 import User from "./User";
+import { storeData } from "../../utils/asyncStorage";
+import { LocalStorage } from "../../constants/localStorage";
+import { Status } from "../../constants/status";
 
 interface IUserStatus {
   isUserTracked: boolean;
   setIsUserTracked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const setBusyStatus = async (userUid: string, brigadeId: string) => {
+  await firestore()
+    .collection("users")
+    .doc(userUid)
+    .update({
+      [`brigades.${brigadeId}.status`]: Status.BUSY,
+      [`brigades.${brigadeId}.time`]: "0:0:0",
+      updated: firestore.Timestamp.fromDate(new Date()),
+    })
+    .then(() => {
+      console.log("User updated!");
+    });
+};
+
 export const UserStatus: FC<IUserStatus> = ({
   isUserTracked,
   setIsUserTracked,
 }) => {
-  const { userData, brigadeId } = useAuth();
+  const { user, userData, brigadeId } = useAuth();
 
   const checkTrackingStatus = async () => {
     const isBackgroundFetchActive = await isBackgroundFetchTaskRegistered();
@@ -36,9 +54,12 @@ export const UserStatus: FC<IUserStatus> = ({
 
   const toggleTracking = async () => {
     if (isUserTracked) {
+      await setBusyStatus(user.uid, brigadeId);
+      await storeData(LocalStorage.BRIGADES_IDS, "[]");
       await stopLocationUpdates();
       await unregisterBackgroundFetchAsync();
     } else {
+      await storeData(LocalStorage.BRIGADES_IDS, JSON.stringify([brigadeId]));
       await startLocationUpdates();
       await registerBackgroundFetchAsync();
     }

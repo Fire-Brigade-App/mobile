@@ -1,23 +1,27 @@
+import { LocalStorage } from "../constants/localStorage";
 import { getData, storeData } from "../utils/asyncStorage";
 import { LocationObject } from "../utils/location";
-import { post } from "./api";
+import { put } from "./api";
 
 export default async function updateLocation(location: LocationObject) {
   console.log("Init the location updating:", JSON.stringify(location));
 
-  const IS_ACTIVE = "is-location-update-active";
-
   // Check if another location update is active
-  const isActive = await getData(IS_ACTIVE);
+  const isActive = await getData(LocalStorage.IS_LOCATION_UPDATE_ACTIVE);
   if (isActive === "true") {
     return;
   }
 
   // Prevent another potential location updates
-  await storeData(IS_ACTIVE, "true");
+  await storeData(LocalStorage.IS_LOCATION_UPDATE_ACTIVE, "true");
+  const brigadesIdsFromStorage = await getData(LocalStorage.BRIGADES_IDS);
+  const brigadesIds = JSON.parse(brigadesIdsFromStorage);
+  const userUid = await getData(LocalStorage.USER_UID);
 
-  await post("/", location);
+  const locationData = { ...location, brigadesIds };
+
+  await put(`/location/${userUid}`, locationData);
 
   // Unblock another potential location updates
-  await storeData(IS_ACTIVE, "false");
+  await storeData(LocalStorage.IS_LOCATION_UPDATE_ACTIVE, "false");
 }

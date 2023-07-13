@@ -4,6 +4,8 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { UserData } from "../../data/UserData";
 import { BrigadePermissions } from "../../constants/brigadePermissions";
+import { storeData } from "../../utils/asyncStorage";
+import { LocalStorage } from "../../constants/localStorage";
 
 const getUserData = async (user: FirebaseAuthTypes.User) => {
   const userData = await firestore().collection("users").doc(user.uid).get();
@@ -149,13 +151,20 @@ export const AuthProvider = (props) => {
   useEffect(() => {
     let didCancel = false;
 
+    const storeUserUid = async (user: FirebaseAuthTypes.User) => {
+      await storeData(LocalStorage.USER_UID, user.uid);
+    };
+
     const fetchUserData = async (user: FirebaseAuthTypes.User) => {
       const userData = await getUserData(user);
       if (!didCancel) setUserData(userData as UserData);
       setInitializing(false);
     };
 
-    user && fetchUserData(user);
+    if (user) {
+      storeUserUid(user);
+      fetchUserData(user);
+    }
 
     return () => {
       didCancel = true;
