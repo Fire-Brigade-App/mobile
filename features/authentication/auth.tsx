@@ -49,7 +49,10 @@ export const useAuth = () => {
 };
 
 // This hook will protect the route access based on user authentication.
-const useProtectedRoute = (user, userData) => {
+const useProtectedRoute = (
+  user: FirebaseAuthTypes.User,
+  userData: UserData
+) => {
   const segments = useSegments();
   const router = useRouter();
   const timer = useRef(null);
@@ -91,7 +94,8 @@ export const useAdmin = () => {
     const fetchBrigadeData = async (brigadeId: string) => {
       const brigadeData = await getBrigadeData(brigadeId);
       const permissions = brigadeData.permissions;
-      const isAdmin = permissions[user.uid]?.includes(BrigadePermissions.ADMIN);
+      const isAdmin =
+        user && permissions[user.uid]?.includes(BrigadePermissions.ADMIN);
       if (!didCancel) setIsAdmin(isAdmin);
     };
 

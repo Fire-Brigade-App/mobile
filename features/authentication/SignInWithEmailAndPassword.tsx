@@ -7,7 +7,10 @@ import {
   TextInput,
   View,
 } from "react-native";
-import auth from "@react-native-firebase/auth";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { useAuth } from "./auth";
+import TextButton from "../../components/TextButton";
+import { Loader } from "../../components/loader/Loader";
 
 enum ErrorCode {
   EMAIL_ALREADY_IN_USE = "auth/email-already-in-use",
@@ -45,6 +48,8 @@ export const SignInWithEmailAndPassword: FC = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  // const { user } = useAuth();
+  // const [resendLoading, setResendLoading] = useState(false);
 
   const handleLogin = async () => {
     setError("");
@@ -64,9 +69,39 @@ export const SignInWithEmailAndPassword: FC = () => {
     }
   };
 
+  // const sendEmailVerification = async () => {
+  //   console.log("Starting verification");
+  //   setResendLoading(true);
+  //   try {
+  //     const message = await auth().currentUser.sendEmailVerification();
+  //     console.log(message);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   setResendLoading(false);
+  //   console.log("End verification");
+  // };
+
   return (
     <View>
       {Boolean(error) && <Text style={styles.error}>{error}</Text>}
+      {/* {user && !user?.emailVerified && (
+        <View style={styles.verifyEmailBox}>
+          <Text style={styles.verifyEmail}>
+            Verification link sent to your email ({user?.email}). Please click
+            the link to activate your account or
+          </Text>
+          {resendLoading ? (
+            <Loader />
+          ) : (
+            <TextButton
+              align="center"
+              title="send verification link again"
+              onPress={sendEmailVerification}
+            />
+          )}
+        </View>
+      )} */}
       <TextInput
         style={styles.input}
         placeholder="email"
@@ -100,4 +135,15 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
   },
+  // verifyEmailBox: {
+  //   padding: 20,
+  //   borderColor: "mediumseagreen",
+  //   borderWidth: 2,
+  //   backgroundColor: "mintcream",
+  //   borderRadius: 20,
+  //   marginBottom: 15,
+  // },
+  // verifyEmail: {
+  //   color: "mediumseagreen",
+  // },
 });

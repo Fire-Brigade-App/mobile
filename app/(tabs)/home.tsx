@@ -5,7 +5,7 @@ import { Map } from "../../features/map/Map";
 import { UserStatus } from "../../features/status/UserStatus";
 import { Screen } from "../../features/screen/Screen";
 import { useAuth } from "../../features/authentication/auth";
-import { Loader } from "../../features/loader/Loader";
+import { ScreenLoader } from "../../components/loader/ScreenLoader";
 import BrigadeStatus from "../../features/status/BrigadeStatus";
 import { useRegisterMessageHandler } from "../../utils/notifications";
 
@@ -16,7 +16,7 @@ const Home: FC = () => {
   useRegisterMessageHandler();
 
   if (!brigadeId) {
-    return <Loader />;
+    return <ScreenLoader />;
   }
 
   return (

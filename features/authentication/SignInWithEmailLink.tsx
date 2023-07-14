@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PACKAGE_NAME = process.env.PACKAGE_NAME;
 const DYNAMIC_LINK = `${process.env.DYNAMIC_LINK_SCHEME}://${process.env.DYNAMIC_LINK_DOMAIN}`;
+// const URL = `fire-brigade://sign-in`;
 
 export const SignInWithEmailLink: FC = () => {
   const [email, setEmail] = useState("");

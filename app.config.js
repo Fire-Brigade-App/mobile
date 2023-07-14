@@ -5,7 +5,7 @@ export default {
     name: "Fire Brigade",
     slug: "fire-brigade",
     version: "0.1.0",
-    scheme: "acme",
+    scheme: "fire-brigade",
     // web: {
     //   bundler: "metro",
     // },
@@ -15,6 +15,7 @@ export default {
         projectId: process.env.EAS_PROJECT_ID,
       },
     },
+    githubUrl: "https://github.com/Fire-Brigade-App",
     plugins: [
       [
         "expo-location",
@@ -33,10 +34,10 @@ export default {
       ],
       ["@react-native-google-signin/google-signin"],
     ],
-    icon: "./app/assets/icon.png",
+    icon: "./assets/icon.png",
     android: {
       adaptiveIcon: {
-        foregroundImage: "./app/assets/adaptive-icon.png",
+        foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
       googleServicesFile:

@@ -1,8 +1,8 @@
 import React, { FC } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { Screen } from "../screen/Screen";
+import { Screen } from "../../features/screen/Screen";
 
-export const Loader: FC = () => {
+export const ScreenLoader: FC = () => {
   return (
     <Screen>
       <View style={styles.loader}>

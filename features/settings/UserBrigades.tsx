@@ -11,7 +11,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../authentication/auth";
-import { Loader } from "../loader/Loader";
+import { ScreenLoader } from "../../components/loader/ScreenLoader";
 import { inputStyle } from "../../styles/input";
 import { Brigade } from "../../data/Brigade";
 import { BrigadeStatus } from "../../constants/brigadeStatus";
@@ -202,7 +202,7 @@ const UserBrigadeForm: FC<{ isInitial?: boolean }> = ({
   }, [searchBrigade]);
 
   if (initializing) {
-    return <Loader />;
+    return <ScreenLoader />;
   }
 
   return (

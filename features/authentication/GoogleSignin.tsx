@@ -1,9 +1,10 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
   GoogleSignin,
   GoogleSigninButton as RNGoogleSigninButton,
 } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
+import { ActivityIndicator } from "react-native";
 
 GoogleSignin.configure({
   webClientId: process.env.GOOGLE_WEB_CLIENT_ID,
@@ -23,21 +24,28 @@ const onGoogleButtonPress = async () => {
 };
 
 export const GoogleSigninButton: FC = () => {
+  const [loading, setLoading] = useState(false);
+
   const handleSignin = async () => {
     try {
+      setLoading(true);
       const signin = await onGoogleButtonPress();
       console.log("Signed in with Google!" + signin);
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   return (
-    <RNGoogleSigninButton
-      size={RNGoogleSigninButton.Size.Wide}
-      color={RNGoogleSigninButton.Color.Light}
-      onPress={handleSignin}
-      // disabled={this.state.isSigninInProgress}
-    />
+    <>
+      {loading && <ActivityIndicator />}
+      <RNGoogleSigninButton
+        size={RNGoogleSigninButton.Size.Wide}
+        color={RNGoogleSigninButton.Color.Light}
+        onPress={handleSignin}
+        disabled={loading}
+      />
+    </>
   );
 };

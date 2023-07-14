@@ -2,8 +2,8 @@ import React, { FC } from "react";
 import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { GoogleSigninButton } from "../../features/authentication/GoogleSignin";
-// import { SignInWithEmailAndPassword } from "./SignInWithEmailAndPassword";
-import { SignInWithEmailLink } from "../../features/authentication/SignInWithEmailLink";
+import { SignInWithEmailAndPassword } from "../../features/authentication/SignInWithEmailAndPassword";
+// import { SignInWithEmailLink } from "../../features/authentication/SignInWithEmailLink";
 import { EmailLinkHandler } from "../../features/authentication/EmailLinkHandler";
 
 const SignIn: FC = () => {
@@ -19,8 +19,8 @@ const SignIn: FC = () => {
         />
       </View>
       <View>
-        {/* <SignInWithEmailAndPassword /> */}
-        <SignInWithEmailLink />
+        <SignInWithEmailAndPassword />
+        {/* <SignInWithEmailLink /> */}
       </View>
       <View style={styles.separator}></View>
       <View style={styles.google}>
