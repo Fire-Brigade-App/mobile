@@ -4,8 +4,10 @@ import UsersList from "./UsersList";
 import UsersSummary from "./UsersSummary";
 import { useUsers } from "./useUsers";
 import { Status } from "../../constants/status";
+import { useAuth } from "../authentication/auth";
 
-const BrigadeStatus: FC<{ brigadeId: string }> = ({ brigadeId }) => {
+const BrigadeStatus: FC = () => {
+  const { brigadeId } = useAuth();
   const { users } = useUsers(brigadeId);
 
   const standby = users.filter((user) =>

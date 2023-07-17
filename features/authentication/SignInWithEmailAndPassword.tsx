@@ -64,7 +64,7 @@ export const SignInWithEmailAndPassword: FC = () => {
       setError("That email address is invalid!");
     } else if (error && error.code === ErrorCode.USER_DISABLED) {
       setError("That account is disabled! Please contact your administrator.");
-    } else {
+    } else if (error) {
       setError("Error code: " + error.code);
     }
   };

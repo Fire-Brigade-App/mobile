@@ -1,5 +1,5 @@
 import React, { useState, FC } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Map } from "../../features/map/Map";
 import { UserStatus } from "../../features/status/UserStatus";
@@ -10,13 +10,25 @@ import BrigadeStatus from "../../features/status/BrigadeStatus";
 import { useRegisterMessageHandler } from "../../utils/notifications";
 
 const Home: FC = () => {
-  const { brigadeId } = useAuth();
+  const { brigadeId, isAccepted } = useAuth();
   const [isUserTracked, setIsUserTracked] = useState(false);
 
   useRegisterMessageHandler();
 
   if (!brigadeId) {
     return <ScreenLoader />;
+  }
+
+  if (!isAccepted) {
+    return (
+      <Screen>
+        <View style={styles.notAcceptedBox}>
+          <Text style={styles.notAccepted}>
+            You are not autorized yet by the fire brigade administrator
+          </Text>
+        </View>
+      </Screen>
+    );
   }
 
   return (
@@ -30,7 +42,7 @@ const Home: FC = () => {
           setIsUserTracked={setIsUserTracked}
         />
         <View style={styles.brigadeStatus}>
-          <BrigadeStatus brigadeId={brigadeId} />
+          <BrigadeStatus />
         </View>
       </View>
       <StatusBar style="auto" />
@@ -53,6 +65,16 @@ const styles = StyleSheet.create({
   },
   brigadeStatus: {
     flex: 1,
+  },
+  notAcceptedBox: {
+    justifyContent: "center",
+    flex: 1,
+    padding: 20,
+  },
+  notAccepted: {
+    color: "#CCCCCC",
+    fontSize: 20,
+    textAlign: "center",
   },
 });
 

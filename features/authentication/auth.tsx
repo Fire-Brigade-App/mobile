@@ -6,6 +6,7 @@ import { UserData } from "../../data/UserData";
 import { BrigadePermissions } from "../../constants/brigadePermissions";
 import { storeData } from "../../utils/asyncStorage";
 import { LocalStorage } from "../../constants/localStorage";
+import { Status } from "../../constants/status";
 
 const getUserData = async (user: FirebaseAuthTypes.User) => {
   const userData = await firestore().collection("users").doc(user.uid).get();
@@ -39,6 +40,7 @@ interface IAuthContext {
   user: FirebaseAuthTypes.User;
   userData: UserData;
   brigadeId: string;
+  isAccepted: boolean;
 }
 
 const AuthContext = createContext<IAuthContext>(null);
@@ -115,6 +117,7 @@ export const AuthProvider = (props) => {
   const [user, setUser] = useState<FirebaseAuthTypes.User>(null);
   const [userData, setUserData] = useState<UserData>(null);
   const [brigadeId, setBrigadeId] = useState<string>(null);
+  const [isAccepted, setIsAccepted] = useState(false);
 
   useProtectedRoute(user, userData);
 
@@ -180,10 +183,19 @@ export const AuthProvider = (props) => {
       ? Object.keys(userData?.brigades)[0]
       : null;
     setBrigadeId(brigadeId);
+
+    if (brigadeId) {
+      const isAccepted = ![Status.CANDIDATE, Status.SUSPENDED].includes(
+        userData.brigades[brigadeId].status
+      );
+      setIsAccepted(isAccepted);
+    }
   }, [userData?.brigades]);
 
   return (
-    <AuthContext.Provider value={{ initializing, user, userData, brigadeId }}>
+    <AuthContext.Provider
+      value={{ initializing, user, userData, brigadeId, isAccepted }}
+    >
       {props.children}
     </AuthContext.Provider>
   );
