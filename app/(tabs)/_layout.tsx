@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRegisterMessageHandler } from "../../utils/notifications";
 
 export default () => {
@@ -9,12 +9,12 @@ export default () => {
   return (
     <Tabs>
       <Tabs.Screen
-        name="home"
+        name="dashboard"
         options={{
           headerShown: false,
-          title: "Home",
+          title: "Dashboard",
           tabBarIcon: ({ color }) => (
-            <AntDesign name="home" size={24} color={color} />
+            <MaterialCommunityIcons name="map-clock" size={24} color={color} />
           ),
         }}
       />

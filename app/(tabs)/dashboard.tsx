@@ -9,7 +9,7 @@ import { useAuth } from "../../features/authentication/auth";
 import { ScreenLoader } from "../../components/loader/ScreenLoader";
 import BrigadeStatus from "../../features/status/BrigadeStatus";
 
-const Home: FC = () => {
+const Dashboard: FC = () => {
   const { brigadeId, isAccepted } = useAuth();
   const [isUserTracked, setIsUserTracked] = useState(false);
 
@@ -79,4 +79,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Dashboard;

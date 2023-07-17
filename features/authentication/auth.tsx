@@ -78,7 +78,7 @@ const useProtectedRoute = (
         router.replace("/choose-brigade");
       } else if (user && inAuthGroup) {
         // Redirect away from the sign-in page.
-        router.replace("/home");
+        router.replace("/dashboard");
       }
     }, 1000);
 
