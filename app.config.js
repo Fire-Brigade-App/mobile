@@ -12,7 +12,7 @@ export default {
     assetBundlePatterns: ["**/*"],
     extra: {
       eas: {
-        projectId: process.env.EAS_PROJECT_ID,
+        projectId: "85590386-1e78-4f58-8476-35c071c2f9de",
       },
     },
     githubUrl: "https://github.com/Fire-Brigade-App",
@@ -56,13 +56,13 @@ export default {
           autoVerify: true, // required to work on newer android versions
         },
       ],
+      package: process.env.PACKAGE_NAME,
       permissions: [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.ACCESS_BACKGROUND_LOCATION",
       ],
-      package: process.env.PACKAGE_NAME,
     },
     ios: {
       associatedDomains: [

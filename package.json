@@ -10,11 +10,12 @@
     "android:device": "npx expo run:android --device",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "rebuild": "expo prebuild",
+    "rebuild": "npx expo prebuild",
     "build:android": "npx eas build --platform android --profile development",
     "build:android:preview": "npx eas build --platform android --profile preview",
     "build:android:prod": "npx eas build --platform android --profile production",
-    "log-android": "npx react-native log-android"
+    "log-android": "npx react-native log-android",
+    "credentials": "npx eas credentials"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
