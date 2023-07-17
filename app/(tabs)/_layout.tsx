@@ -1,7 +1,11 @@
 import { Tabs } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
+import { useRegisterMessageHandler } from "../../utils/notifications";
 
 export default () => {
+  // Register foregound notification handlers
+  useRegisterMessageHandler();
+
   return (
     <Tabs>
       <Tabs.Screen

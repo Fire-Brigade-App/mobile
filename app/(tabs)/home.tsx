@@ -1,19 +1,20 @@
 import React, { useState, FC } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { useKeepAwake } from "expo-keep-awake";
 import { Map } from "../../features/map/Map";
 import { UserStatus } from "../../features/status/UserStatus";
 import { Screen } from "../../features/screen/Screen";
 import { useAuth } from "../../features/authentication/auth";
 import { ScreenLoader } from "../../components/loader/ScreenLoader";
 import BrigadeStatus from "../../features/status/BrigadeStatus";
-import { useRegisterMessageHandler } from "../../utils/notifications";
 
 const Home: FC = () => {
   const { brigadeId, isAccepted } = useAuth();
   const [isUserTracked, setIsUserTracked] = useState(false);
 
-  useRegisterMessageHandler();
+  // That prevents the screen from sleeping.
+  useKeepAwake();
 
   if (!brigadeId) {
     return <ScreenLoader />;
