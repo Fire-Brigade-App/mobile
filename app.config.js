@@ -12,7 +12,7 @@ export default {
     assetBundlePatterns: ["**/*"],
     extra: {
       eas: {
-        projectId: "85590386-1e78-4f58-8476-35c071c2f9de",
+        projectId: process.env.EAS_PROJECT_ID,
       },
     },
     githubUrl: "https://github.com/Fire-Brigade-App",
@@ -68,6 +68,12 @@ export default {
       associatedDomains: [
         `applinks:${process.env.DYNAMIC_LINK_SCHEME}://${process.env.DYNAMIC_LINK_DOMAIN}`,
       ],
+    },
+    updates: {
+      url: `https://u.expo.dev/${process.env.EAS_PROJECT_ID}`,
+    },
+    runtimeVersion: {
+      policy: "sdkVersion",
     },
   },
   name: "Fire Brigade",

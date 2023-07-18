@@ -5,11 +5,14 @@
       "distribution": "internal"
     },
     "preview": {
+      "channel": "preview",
       "distribution": "internal",
       "env": {
         "PACKAGE_NAME": "com.maksymilianorg.firebrigade"
       }
     },
-    "production": {}
+    "production": {
+      "channel": "production"
+    }
   }
 }
