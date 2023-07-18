@@ -58,3 +58,18 @@ export const getLocation = async () => {
   }
   return location;
 };
+
+export const isSignificantCoordinatesDiff = (
+  coordinatesA: [number, number],
+  coordinatesB: [number, number]
+) => {
+  const [latA, lonA] = coordinatesA;
+  const [latB, lonB] = coordinatesB;
+
+  // We only need to return true if between locations is distance bigger than
+  // ~25  meters
+  const idLatDiff = Math.abs(latA - latB) > 0.0003;
+  const isLonDiff = Math.abs(lonA - lonB) > 0.0002;
+
+  return idLatDiff || isLonDiff;
+};
