@@ -3,6 +3,7 @@ import React, { FC, useMemo, useState } from "react";
 import Roles from "./Roles";
 import Updated from "./Updated";
 import { UserData } from "../../data/UserData";
+import { Status } from "../../constants/status";
 
 const formatTime = (time: string) => {
   if (time) {
@@ -24,6 +25,7 @@ const User: FC<{
   const brigade = userData?.brigades[brigadeId];
   const updated = userData?.updated;
   const roles = brigade?.roles;
+  const status = brigade?.status;
 
   const time = useMemo(
     () => (userData && brigade?.time ? formatTime(brigade?.time) : ""),
@@ -53,7 +55,7 @@ const User: FC<{
         {showDetails && (
           <>
             {Boolean(roles) && <Roles roles={roles} />}
-            {Boolean(time) && (
+            {status !== Status.BUSY && (
               <Text style={[styles.time, styleTime]}>{time}</Text>
             )}
           </>

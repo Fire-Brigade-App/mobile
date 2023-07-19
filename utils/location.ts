@@ -68,8 +68,8 @@ export const isSignificantCoordinatesDiff = (
 
   // We only need to return true if between locations is distance bigger than
   // ~25  meters
-  const idLatDiff = Math.abs(latA - latB) > 0.0003;
+  const isLatDiff = Math.abs(latA - latB) > 0.0003;
   const isLonDiff = Math.abs(lonA - lonB) > 0.0002;
 
-  return idLatDiff || isLonDiff;
+  return isLatDiff || isLonDiff;
 };

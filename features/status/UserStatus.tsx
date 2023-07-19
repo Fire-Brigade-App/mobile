@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   isBackgroundFetchTaskRegistered,
   registerBackgroundFetchAsync,
@@ -10,37 +10,25 @@ import {
   stopLocationUpdates,
 } from "../../utils/location";
 import { StyleSheet, Switch, Text, View } from "react-native";
-import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../authentication/auth";
 import User from "./User";
 import { storeData } from "../../utils/asyncStorage";
 import { LocalStorage } from "../../constants/localStorage";
 import { Status } from "../../constants/status";
+import { updateStatus } from "../../api/updateStatus";
 
 interface IUserStatus {
   isUserTracked: boolean;
   setIsUserTracked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const setBusyStatus = async (userUid: string, brigadeId: string) => {
-  await firestore()
-    .collection("users")
-    .doc(userUid)
-    .update({
-      [`brigades.${brigadeId}.status`]: Status.BUSY,
-      [`brigades.${brigadeId}.time`]: "0:0:0",
-      updated: firestore.Timestamp.fromDate(new Date()),
-    })
-    .then(() => {
-      console.log("User updated!");
-    });
-};
-
 export const UserStatus: FC<IUserStatus> = ({
   isUserTracked,
   setIsUserTracked,
 }) => {
   const { user, userData, brigadeId } = useAuth();
+  const [disabledSwitch, setDisabledSwitch] = useState(false);
+  const lastStatus = userData?.brigades[brigadeId]?.status;
 
   const checkTrackingStatus = async () => {
     const isBackgroundFetchActive = await isBackgroundFetchTaskRegistered();
@@ -49,22 +37,46 @@ export const UserStatus: FC<IUserStatus> = ({
     console.log("isLocationUpdatesActive", isLocationUpdatesActive);
 
     const isTracked = isBackgroundFetchActive && isLocationUpdatesActive;
+    const isBusy = lastStatus === Status.BUSY;
+
+    // Handle cases when the state of the app is not synced with the database
+    if (isTracked && isBusy) {
+      // Clear location data from local storage due it could be outdated.
+      await storeData(LocalStorage.USER_LOCATION, "");
+      await updateStatus(user.uid, brigadeId, Status.OFFLINE);
+    } else if (!isTracked && !isBusy) {
+      // Clear location data from local storage due it could be outdated.
+      await storeData(LocalStorage.USER_LOCATION, "");
+      await updateStatus(user.uid, brigadeId, Status.BUSY);
+    }
+
     setIsUserTracked(isTracked);
   };
 
+  const handleChangeStatus = async (status: Status) => {
+    await updateStatus(user.uid, brigadeId, status);
+  };
+
   const toggleTracking = async () => {
+    setDisabledSwitch(true);
+
     if (isUserTracked) {
-      await setBusyStatus(user.uid, brigadeId);
+      // Clear location data from local storage due to it could be outdated
+      // after returning to the standby  mode.
+      await storeData(LocalStorage.USER_LOCATION, "");
+      await handleChangeStatus(Status.BUSY);
       await storeData(LocalStorage.BRIGADES_IDS, "[]");
       await stopLocationUpdates();
       await unregisterBackgroundFetchAsync();
     } else {
+      await handleChangeStatus(Status.BUSY);
       await storeData(LocalStorage.BRIGADES_IDS, JSON.stringify([brigadeId]));
       await startLocationUpdates();
       await registerBackgroundFetchAsync();
     }
 
     checkTrackingStatus();
+    setDisabledSwitch(false);
   };
 
   useEffect(() => {
@@ -85,6 +97,7 @@ export const UserStatus: FC<IUserStatus> = ({
           <Text style={[styles.mode, styles.busy]}>busy</Text>
         )}
         <Switch
+          disabled={disabledSwitch}
           onValueChange={toggleTracking}
           value={isUserTracked}
           thumbColor={isUserTracked ? "#1da1f2" : "#DC143C"}

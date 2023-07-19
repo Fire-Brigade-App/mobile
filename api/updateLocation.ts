@@ -29,10 +29,10 @@ export default async function updateLocation(location: LocationObject) {
       [latitude, longitude]
     );
     preventRouteDurationMeasurement = !isSimilarCoordinates;
+  }
 
-    if (!preventRouteDurationMeasurement) {
-      await storeData(LocalStorage.USER_LOCATION, JSON.stringify(location));
-    }
+  if (!preventRouteDurationMeasurement) {
+    await storeData(LocalStorage.USER_LOCATION, JSON.stringify(location));
   }
 
   // Prevent another potential location updates
@@ -47,7 +47,11 @@ export default async function updateLocation(location: LocationObject) {
     preventRouteDurationMeasurement,
   };
 
-  await put(`/location/${userUid}`, locationData);
+  try {
+    await put(`/location/${userUid}`, locationData);
+  } catch (error) {
+    console.error(error);
+  }
 
   // Unblock another potential location updates
   await storeData(LocalStorage.IS_LOCATION_UPDATE_ACTIVE, "false");
