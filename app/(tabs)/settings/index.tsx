@@ -32,6 +32,9 @@ const Settings: FC = () => {
               Management
             </Link>
           )}
+          <Link href="/settings/application" style={styles.link}>
+            Application
+          </Link>
         </View>
       </Screen>
     </>
