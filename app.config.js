@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "Fire Brigade",
     slug: "fire-brigade",
-    version: "0.1.0",
+    version: "0.1.1",
     scheme: "fire-brigade",
     // web: {
     //   bundler: "metro",
@@ -12,7 +12,7 @@ export default {
     assetBundlePatterns: ["**/*"],
     extra: {
       eas: {
-        projectId: process.env.EAS_PROJECT_ID,
+        projectId: "85590386-1e78-4f58-8476-35c071c2f9de",
       },
     },
     githubUrl: "https://github.com/Fire-Brigade-App",
@@ -70,7 +70,7 @@ export default {
       ],
     },
     updates: {
-      url: `https://u.expo.dev/${process.env.EAS_PROJECT_ID}`,
+      url: "https://u.expo.dev/85590386-1e78-4f58-8476-35c071c2f9de",
     },
     runtimeVersion: {
       policy: "sdkVersion",

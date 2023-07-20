@@ -1,7 +1,7 @@
 {
   "name": "fire-brigade",
   "description": "Android & iOS app for the support of volunteer fire brigades by measuring in real time the time it takes to initiate a potential emergency rescue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Maksymilian.org",
   "license": "CC-BY-NC-SA-4.0",
   "main": "index.js",
@@ -13,9 +13,12 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "rebuild": "npx expo prebuild",
-    "build:android": "npx eas build --platform android --profile development",
+    "build": "npx eas build --platform all --profile production",
+    "build:dev": "npx eas build --platform all --profile development",
+    "build:preview": "npx eas build --platform all --profile preview",
+    "build:android": "npx eas build --platform android --profile production",
+    "build:android:dev": "npx eas build --platform android --profile development",
     "build:android:preview": "npx eas build --platform android --profile preview",
-    "build:android:prod": "npx eas build --platform android --profile production",
     "log-android": "npx react-native log-android",
     "credentials": "npx eas credentials"
   },
