@@ -13,6 +13,7 @@ import { UserData, UserDataWithUid } from "../../data/UserData";
 import { useAuth } from "../authentication/auth";
 import { titleStyle } from "../../styles/title";
 import { contentStyle } from "../../styles/content";
+import { Activity } from "../../constants/Activity";
 
 const Candidate: FC<{
   userData: UserDataWithUid;
@@ -39,7 +40,7 @@ const Candidate: FC<{
           <ActivityIndicator size="large" />
         ) : (
           <>
-            <Pressable onPress={() => handleChangeStatus(Status.OFFLINE)}>
+            <Pressable onPress={() => handleChangeStatus(Status.EMPTY)}>
               <Text style={[styles.button, styles.approve]}>Approve</Text>
             </Pressable>
             {!isSuspended && (
@@ -90,7 +91,10 @@ const Candidates: FC = () => {
     await firestore()
       .collection("users")
       .doc(userUid)
-      .update({ [`brigades.${brigadeId}.status`]: status })
+      .update({
+        activity: Activity.INACTIVE,
+        [`brigades.${brigadeId}.status`]: status,
+      })
       .then(() => {
         console.log("User status changed!");
       });

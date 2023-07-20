@@ -8,19 +8,35 @@ import {
   hasStartedLocationUpdates,
   startLocationUpdates,
   stopLocationUpdates,
+  triggerLocationUpdate,
 } from "../../utils/location";
 import { StyleSheet, Switch, Text, View } from "react-native";
 import { useAuth } from "../authentication/auth";
 import User from "./User";
 import { storeData } from "../../utils/asyncStorage";
 import { LocalStorage } from "../../constants/localStorage";
+import { Activity } from "../../constants/Activity";
+import firestore from "@react-native-firebase/firestore";
 import { Status } from "../../constants/status";
-import { updateStatus } from "../../api/updateStatus";
 
 interface IUserStatus {
   isUserTracked: boolean;
   setIsUserTracked: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+const updateActivity = async (
+  userUid: string,
+  brigadeId: string,
+  activity: Activity
+) => {
+  await firestore()
+    .collection("users")
+    .doc(userUid)
+    .update({
+      activity,
+      [`brigades.${brigadeId}.status`]: Status.EMPTY,
+    });
+};
 
 export const UserStatus: FC<IUserStatus> = ({
   isUserTracked,
@@ -28,7 +44,7 @@ export const UserStatus: FC<IUserStatus> = ({
 }) => {
   const { user, userData, brigadeId } = useAuth();
   const [disabledSwitch, setDisabledSwitch] = useState(false);
-  const lastStatus = userData?.brigades[brigadeId]?.status;
+  const lastActivity = userData?.activity;
 
   const checkTrackingStatus = async () => {
     const isBackgroundFetchActive = await isBackgroundFetchTaskRegistered();
@@ -37,24 +53,25 @@ export const UserStatus: FC<IUserStatus> = ({
     console.log("isLocationUpdatesActive", isLocationUpdatesActive);
 
     const isTracked = isBackgroundFetchActive && isLocationUpdatesActive;
-    const isBusy = lastStatus === Status.BUSY;
+    const isBusy = lastActivity === Activity.BUSY;
+    const isOffline = [Activity.OFFLINE, Activity.INACTIVE].includes(
+      lastActivity
+    );
 
     // Handle cases when the state of the app is not synced with the database
     if (isTracked && isBusy) {
       // Clear location data from local storage due it could be outdated.
       await storeData(LocalStorage.USER_LOCATION, "");
-      await updateStatus(user.uid, brigadeId, Status.OFFLINE);
     } else if (!isTracked && !isBusy) {
       // Clear location data from local storage due it could be outdated.
       await storeData(LocalStorage.USER_LOCATION, "");
-      await updateStatus(user.uid, brigadeId, Status.BUSY);
+      await updateActivity(user.uid, brigadeId, Activity.BUSY);
+    } else if (isTracked && isOffline) {
+      await storeData(LocalStorage.USER_LOCATION, "");
+      await triggerLocationUpdate();
     }
 
     setIsUserTracked(isTracked);
-  };
-
-  const handleChangeStatus = async (status: Status) => {
-    await updateStatus(user.uid, brigadeId, status);
   };
 
   const toggleTracking = async () => {
@@ -64,18 +81,16 @@ export const UserStatus: FC<IUserStatus> = ({
       // Clear location data from local storage due to it could be outdated
       // after returning to the standby  mode.
       await storeData(LocalStorage.USER_LOCATION, "");
-      await handleChangeStatus(Status.BUSY);
       await storeData(LocalStorage.BRIGADES_IDS, "[]");
       await stopLocationUpdates();
       await unregisterBackgroundFetchAsync();
     } else {
-      await handleChangeStatus(Status.BUSY);
       await storeData(LocalStorage.BRIGADES_IDS, JSON.stringify([brigadeId]));
       await startLocationUpdates();
       await registerBackgroundFetchAsync();
     }
 
-    checkTrackingStatus();
+    await checkTrackingStatus();
     setDisabledSwitch(false);
   };
 

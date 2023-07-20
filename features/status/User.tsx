@@ -3,7 +3,7 @@ import React, { FC, useMemo, useState } from "react";
 import Roles from "./Roles";
 import Updated from "./Updated";
 import { UserData } from "../../data/UserData";
-import { Status } from "../../constants/status";
+import { Activity } from "../../constants/Activity";
 
 const formatTime = (time: string) => {
   if (time) {
@@ -25,22 +25,16 @@ const User: FC<{
   const brigade = userData?.brigades[brigadeId];
   const updated = userData?.updated;
   const roles = brigade?.roles;
-  const status = brigade?.status;
 
   const time = useMemo(
     () => (userData && brigade?.time ? formatTime(brigade?.time) : ""),
     [userData]
   );
 
-  const styleStatus =
-    userData && brigade?.status
-      ? styles[`${brigade?.status}Status`]
-      : styles.blankStatus;
-
-  const styleTime =
-    userData && brigade?.status
-      ? styles[`${brigade?.status}Time`]
-      : styles.blankTime;
+  const isOnline = userData.activity === Activity.ONLINE;
+  const color = (isOnline ? brigade?.status : userData?.activity) || "blank";
+  const styleColor = styles[`${color}Color`];
+  const styleTime = styles[`${color}Time`];
 
   return (
     <>
@@ -48,16 +42,14 @@ const User: FC<{
         style={styles.user}
         onLongPress={() => setIsExpanded((prev) => !prev)}
       >
-        <View style={[styles.status, styleStatus]}></View>
+        <View style={[styles.status, styleColor]}></View>
         <Text style={styles.name}>
           {userData.firstName} {userData.lastName}
         </Text>
         {showDetails && (
           <>
             {Boolean(roles) && <Roles roles={roles} />}
-            {status !== Status.BUSY && (
-              <Text style={[styles.time, styleTime]}>{time}</Text>
-            )}
+            {isOnline && <Text style={[styles.time, styleTime]}>{time}</Text>}
           </>
         )}
       </Pressable>
@@ -83,25 +75,25 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 8,
   },
-  nearStatus: {
+  nearColor: {
     backgroundColor: "#3CB371",
   },
-  farStatus: {
+  farColor: {
     backgroundColor: "#BDB76B",
   },
-  outStatus: {
+  outColor: {
     backgroundColor: "#D2691E",
   },
-  busyStatus: {
+  busyColor: {
     backgroundColor: "#DC143C",
   },
-  offlineStatus: {
+  offlineColor: {
     backgroundColor: "#778899",
   },
-  inactiveStatus: {
+  inactiveColor: {
     backgroundColor: "#222222",
   },
-  blankStatus: {
+  blankColor: {
     backgroundColor: "transparent",
   },
   name: {

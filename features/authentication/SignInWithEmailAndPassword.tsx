@@ -48,6 +48,7 @@ export const SignInWithEmailAndPassword: FC = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const disabled = !email || !password;
   // const { user } = useAuth();
   // const [resendLoading, setResendLoading] = useState(false);
 
@@ -118,7 +119,7 @@ export const SignInWithEmailAndPassword: FC = () => {
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
-        <Button onPress={handleLogin} title="Login" />
+        <Button disabled={disabled} onPress={handleLogin} title="Login" />
       )}
     </View>
   );

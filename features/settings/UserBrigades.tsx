@@ -21,6 +21,7 @@ import { Status } from "../../constants/status";
 import { titleStyle } from "../../styles/title";
 import TextButton from "../../components/TextButton";
 import { contentStyle } from "../../styles/content";
+import { Activity } from "../../constants/Activity";
 
 interface BrigadeWithUid extends Brigade {
   uid: string;
@@ -160,13 +161,14 @@ const UserBrigadeForm: FC<{ isInitial?: boolean }> = ({
 
       const brigadeDocRef = await createBrigade(brigadeData);
       brigadeId = brigadeDocRef.id;
-      status = Status.OFFLINE;
+      status = Status.EMPTY;
     }
 
     await firestore()
       .collection("users")
       .doc(userUid)
       .update({
+        activity: Activity.INACTIVE,
         brigades: {
           [brigadeId]: {
             roles: [Role.FIREFIGHTER],

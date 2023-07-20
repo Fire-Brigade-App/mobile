@@ -1,11 +1,10 @@
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import { Status } from "../constants/status";
 import { Role } from "../constants/role";
+import { Activity } from "../constants/Activity";
 
 export interface UserData {
-  fcmToken: string;
-  firstName: string;
-  lastName: string;
+  activity: Activity;
   brigades: {
     [brigadeId: string]: {
       status: Status;
@@ -13,6 +12,9 @@ export interface UserData {
       roles: Role[];
     };
   };
+  fcmToken: string;
+  firstName: string;
+  lastName: string;
   location: FirebaseFirestoreTypes.GeoPoint;
   updated: FirebaseFirestoreTypes.Timestamp;
 }

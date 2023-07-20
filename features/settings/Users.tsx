@@ -37,9 +37,7 @@ const Users: FC = () => {
         Status.NEAR,
         Status.FAR,
         Status.OUT,
-        Status.OFFLINE,
-        Status.BUSY,
-        Status.INACTIVE,
+        Status.EMPTY,
       ])
       .onSnapshot((documentSnapshot) => {
         const users = documentSnapshot.docs.map((doc) => ({

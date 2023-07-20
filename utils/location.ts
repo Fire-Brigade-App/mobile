@@ -5,7 +5,10 @@ import updateLocation from "../api/updateLocation";
 const LOCATION_TASK_NAME = "background-location-task";
 
 export interface LocationObject extends Location.LocationObject {
-  source: "background-location-task" | "background-fetch";
+  source:
+    | "background-location-task"
+    | "background-fetch"
+    | "trigger-location-update";
 }
 
 export const defineLocationTask = async () => {
@@ -57,6 +60,11 @@ export const getLocation = async () => {
     location = await Location.getLastKnownPositionAsync();
   }
   return location;
+};
+
+export const triggerLocationUpdate = async () => {
+  const location = await getLocation();
+  await updateLocation({ ...location, source: "trigger-location-update" });
 };
 
 export const isSignificantCoordinatesDiff = (

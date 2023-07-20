@@ -2,18 +2,23 @@ import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
 import { UserData } from "../../data/UserData";
 import { Status } from "../../constants/status";
+import { Activity } from "../../constants/Activity";
 
-const orderedStatuses = [
-  Status.NEAR,
-  Status.FAR,
-  Status.OUT,
-  Status.BUSY,
-  Status.OFFLINE,
-  Status.INACTIVE,
-];
+const orderedStatuses = [Status.NEAR, Status.FAR, Status.OUT, Status.EMPTY];
 
 const getStatusIndex = (user: UserData, brigadeId: string) => {
   return orderedStatuses.indexOf(user.brigades[brigadeId].status);
+};
+
+const orderedActivity = [
+  Activity.ONLINE,
+  Activity.BUSY,
+  Activity.OFFLINE,
+  Activity.INACTIVE,
+];
+
+const getActivityIndex = (user: UserData) => {
+  return orderedActivity.indexOf(user.activity);
 };
 
 const getTime = (user: UserData, brigadeId: string) => {
@@ -35,9 +40,7 @@ export const useUsers = (brigadeId: string) => {
         Status.NEAR,
         Status.FAR,
         Status.OUT,
-        Status.BUSY,
-        Status.OFFLINE,
-        Status.INACTIVE,
+        Status.EMPTY,
       ])
       .onSnapshot((documentSnapshot) => {
         const users = documentSnapshot.docs.map(
@@ -45,6 +48,7 @@ export const useUsers = (brigadeId: string) => {
         );
         const sortedUsers = users.sort(
           (a, b) =>
+            getActivityIndex(a) - getActivityIndex(b) ||
             getStatusIndex(a, brigadeId) - getStatusIndex(b, brigadeId) ||
             getTime(a, brigadeId) - getTime(b, brigadeId)
         );
