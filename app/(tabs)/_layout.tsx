@@ -19,6 +19,16 @@ export default () => {
         }}
       />
       <Tabs.Screen
+        name="alerts"
+        options={{
+          headerShown: false,
+          title: "Alerts",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="fire-alert" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           headerShown: false,

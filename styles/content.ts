@@ -3,5 +3,5 @@ export const contentStyle = {
   flex: 1,
   justifyContent: "flex-start" as const,
   padding: 20,
-  bacgroundColor: "#ffffff",
+  backgroundColor: "#ffffff",
 };

@@ -8,6 +8,7 @@ import { Screen } from "../../features/screen/Screen";
 import { useAuth } from "../../features/authentication/auth";
 import { ScreenLoader } from "../../components/loader/ScreenLoader";
 import BrigadeStatus from "../../features/status/BrigadeStatus";
+import CurrentAlert from "../../features/alerts/CurrentAlert";
 
 const Dashboard: FC = () => {
   const { brigadeId, isAccepted } = useAuth();
@@ -38,6 +39,7 @@ const Dashboard: FC = () => {
         <Map isUserTracked={isUserTracked} />
       </View>
       <View style={styles.content}>
+        <CurrentAlert />
         <UserStatus
           isUserTracked={isUserTracked}
           setIsUserTracked={setIsUserTracked}
@@ -63,6 +65,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     alignSelf: "stretch",
+    backgroundColor: "#ffffff",
   },
   brigadeStatus: {
     flex: 1,

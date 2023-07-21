@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../authentication/auth";
 import { Brigade } from "../../data/Brigade";
+import { BrigadeStatus } from "../../constants/brigadeStatus";
 
 export const useBrigade = () => {
   const { brigadeId } = useAuth();
   const [brigade, setBrigade] = useState<Brigade>();
+  const status = brigade?.status;
+  const isActiveAlert = status === BrigadeStatus.ALERT;
 
   useEffect(() => {
     const subscriber = firestore()
@@ -20,5 +23,5 @@ export const useBrigade = () => {
     return () => subscriber();
   }, [brigadeId]);
 
-  return { brigade };
+  return { brigade, isActiveAlert };
 };
