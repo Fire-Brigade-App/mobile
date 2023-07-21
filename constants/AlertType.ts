@@ -1,4 +1,4 @@
-enum AlertType {
+export enum AlertType {
   FIRE = "fire",
   THREAT = "threat",
   ACCIDENT = "accident",

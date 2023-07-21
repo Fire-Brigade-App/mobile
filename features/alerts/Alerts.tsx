@@ -3,7 +3,9 @@ import React, { FC } from "react";
 import { Screen } from "../screen/Screen";
 import { useAlerts } from "./userAlerts";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { AlertType } from "../../constants/AlertType";
+import { Button } from "tamagui";
 
 export interface IAlert {
   added: FirebaseFirestoreTypes.Timestamp;
@@ -15,7 +17,7 @@ export interface IAlert {
   confirmedBy: string[];
   rejectedBy: string[];
   onTheWay: string[];
-  geopoint: FirebaseFirestoreTypes.GeoPoint;
+  location: FirebaseFirestoreTypes.GeoPoint;
   source: string;
 }
 
@@ -50,6 +52,7 @@ const AlertItem: FC<{ alert: AlertWithId }> = ({ alert }) => {
 
 const Alerts: FC = () => {
   const { alerts } = useAlerts();
+  const router = useRouter();
 
   return (
     <Screen>
@@ -59,6 +62,14 @@ const Alerts: FC = () => {
           renderItem={({ item }) => <AlertItem alert={item} />}
           style={styles.alerts}
         />
+        <Button
+          alignSelf="flex-end"
+          onPress={() => {
+            router.push("/alerts/add");
+          }}
+        >
+          Add alert
+        </Button>
       </View>
     </Screen>
   );

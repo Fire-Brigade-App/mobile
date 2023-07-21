@@ -4,12 +4,12 @@ import Mapbox, {
   MapView,
   MarkerView,
   UserLocation,
-  UserTrackingMode,
 } from "@rnmapbox/maps";
 import { Pressable, StyleSheet, Text } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { configMapbox } from "./mapbox";
 import { useBrigade } from "../status/useBrigade";
+import { useAlerts } from "../alerts/userAlerts";
 
 interface IMap {
   isUserTracked: boolean;
@@ -22,16 +22,20 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
   const [followUserLocation, setFollowUserLocation] = useState(true);
   const [userLocation, setUserLocation] = useState([0, 0]);
   const [brigadeCoordinates, setBrigadeCoordinates] = useState(null);
+  const [alertCoordinates, setAlertCoordinates] = useState(null);
   const { brigade } = useBrigade();
+  const { currentAlert } = useAlerts();
 
   const handleDidFinishRenderingMapFully = () => {
     const centerCoordinate = userLocation[0]
       ? userLocation
+      : alertCoordinates
+      ? alertCoordinates
       : brigadeCoordinates;
     cameraRef.current?.setCamera({
       animationDuration: 0,
       centerCoordinate,
-      zoomLevel: 13,
+      zoomLevel: 12,
     });
   };
 
@@ -51,7 +55,7 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
 
   const centerOnUserLocation = () => {
     cameraRef.current?.setCamera({
-      centerCoordinate: userLocation,
+      centerCoordinate: userLocation[0] ? userLocation : brigadeCoordinates,
       animationDuration: 500,
     });
     setFollowUserLocation(true);
@@ -59,10 +63,25 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
 
   useEffect(() => {
     if (brigade?.location) {
-      const { longitude, latitude } = brigade?.location;
+      const { longitude, latitude } = brigade.location;
       setBrigadeCoordinates([longitude, latitude]);
     }
-  }, [brigade]);
+  }, [brigade?.location]);
+
+  useEffect(() => {
+    if (currentAlert?.location) {
+      const { longitude, latitude } = currentAlert.location;
+      setAlertCoordinates([longitude, latitude]);
+      setFollowUserLocation(false);
+      cameraRef.current?.setCamera({
+        centerCoordinate: [longitude, latitude],
+        animationDuration: 500,
+        zoomLevel: 12,
+      });
+    } else {
+      setAlertCoordinates(null);
+    }
+  }, [currentAlert?.location]);
 
   return (
     <>
@@ -88,8 +107,15 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
         <Camera ref={cameraRef} zoomLevel={13} />
         {brigadeCoordinates && (
           <MarkerView coordinate={brigadeCoordinates} allowOverlap={true}>
-            <Pressable style={styles.markerBox}>
+            <Pressable style={[styles.markerBox, styles.markerBrigade]}>
               <Text style={styles.markerText}>OSP</Text>
+            </Pressable>
+          </MarkerView>
+        )}
+        {alertCoordinates && (
+          <MarkerView coordinate={alertCoordinates} allowOverlap={true}>
+            <Pressable style={[styles.markerBox, styles.markerAlert]}>
+              <MaterialCommunityIcons name="fire" size={24} color="#000000" />
             </Pressable>
           </MarkerView>
         )}
@@ -132,17 +158,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 6,
-    padding: 4,
     borderWidth: 2,
-    borderColor: "white",
-    backgroundColor: "red",
   },
-  markerBoxSelected: {
-    padding: 12,
+  markerBrigade: {
+    padding: 4,
+    borderColor: "#FFFFFF",
+    backgroundColor: "#DC143C",
   },
   markerText: {
-    color: "white",
+    color: "#FFFFFF",
     fontSize: 11,
     fontWeight: "bold",
+  },
+  markerAlert: {
+    padding: 0,
+    backgroundColor: "#FFC302",
+    borderColor: "white",
   },
 });
