@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "Fire Brigade",
     slug: "fire-brigade",
-    version: "0.1.1",
+    version: "0.1.2",
     scheme: "fire-brigade",
     // web: {
     //   bundler: "metro",
