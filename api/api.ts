@@ -1,5 +1,12 @@
+import { isInternetReachable } from "../utils/network";
+
 const api = async (path: string, method = "GET", data?: object) => {
   try {
+    const isInternet = await isInternetReachable();
+    if (!isInternet) {
+      return;
+    }
+
     const response = await fetch(process.env.API_URL + path, {
       method,
       headers: {

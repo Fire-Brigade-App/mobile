@@ -18,6 +18,7 @@ import { LocalStorage } from "../../constants/localStorage";
 import { Activity } from "../../constants/Activity";
 import firestore from "@react-native-firebase/firestore";
 import { Status } from "../../constants/status";
+import { isInternetReachable } from "../../utils/network";
 
 interface IUserStatus {
   isUserTracked: boolean;
@@ -76,6 +77,14 @@ export const UserStatus: FC<IUserStatus> = ({
 
   const toggleTracking = async () => {
     setDisabledSwitch(true);
+
+    const isInternet = await isInternetReachable();
+    console.log("isInternet", isInternet);
+    if (!isInternet) {
+      // TODO: show alert about internet reachability
+      setDisabledSwitch(false);
+      return;
+    }
 
     if (isUserTracked) {
       // Clear location data from local storage due to it could be outdated
