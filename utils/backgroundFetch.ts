@@ -1,7 +1,6 @@
 import * as TaskManager from "expo-task-manager";
 import * as BackgroundFetch from "expo-background-fetch";
-import updateLocation from "../api/updateLocation";
-import { getLocation } from "./location";
+import updateLocation, { getLocation } from "./location";
 
 export const BACKGROUND_FETCH_TASK = "background-fetch";
 
@@ -38,7 +37,9 @@ export const registerBackgroundFetchAsync = async () => {
  * @link https://docs.expo.dev/versions/latest/sdk/background-fetch/#usage
  */
 export const unregisterBackgroundFetchAsync = async () => {
-  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+  if (await isBackgroundFetchTaskRegistered()) {
+    return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+  }
 };
 
 export const isBackgroundFetchTaskRegistered = async () => {
