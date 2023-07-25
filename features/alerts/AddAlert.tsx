@@ -17,6 +17,7 @@ interface AlertData {
   municipality: string;
   description: string;
   type: AlertType;
+  author: string;
   source: string;
 }
 
@@ -39,9 +40,10 @@ const AddAlert: FC = () => {
   const [loading, setLoading] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [error, setError] = useState("");
-  const source = `${userData?.firstName} ${userData?.lastName}`;
+  const author = `${userData?.firstName} ${userData?.lastName}`;
   const country = countriesMap[brigade?.country];
   const municipality = brigade?.municipality;
+  const source = "user";
 
   const handleAddAlert = async () => {
     setLoading(true);
@@ -53,6 +55,7 @@ const AddAlert: FC = () => {
         municipality,
         description,
         type,
+        author,
         source,
       });
 
