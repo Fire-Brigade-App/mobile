@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
-import { UserData } from "../../data/UserData";
+import { UserDataWithUid } from "../../data/UserData";
 import { Status } from "../../constants/status";
 import { Activity } from "../../constants/Activity";
 
 const orderedStatuses = [Status.NEAR, Status.FAR, Status.OUT, Status.EMPTY];
 
-const getStatusIndex = (user: UserData, brigadeId: string) => {
+const getStatusIndex = (user: UserDataWithUid, brigadeId: string) => {
   return orderedStatuses.indexOf(user.brigades[brigadeId].status);
 };
 
@@ -17,11 +17,11 @@ const orderedActivity = [
   Activity.INACTIVE,
 ];
 
-const getActivityIndex = (user: UserData) => {
+const getActivityIndex = (user: UserDataWithUid) => {
   return orderedActivity.indexOf(user.activity);
 };
 
-const getTime = (user: UserData, brigadeId: string) => {
+const getTime = (user: UserDataWithUid, brigadeId: string) => {
   return parseInt(
     user.brigades[brigadeId].time
       .split(":")
@@ -31,7 +31,7 @@ const getTime = (user: UserData, brigadeId: string) => {
 };
 
 export const useUsers = (brigadeId: string) => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserDataWithUid[]>([]);
 
   useEffect(() => {
     const subscriber = firestore()
@@ -44,7 +44,7 @@ export const useUsers = (brigadeId: string) => {
       ])
       .onSnapshot((documentSnapshot) => {
         const users = documentSnapshot.docs.map(
-          (doc) => doc.data() as UserData
+          (doc) => ({ uid: doc.id, ...doc.data() } as UserDataWithUid)
         );
         const sortedUsers = users.sort(
           (a, b) =>

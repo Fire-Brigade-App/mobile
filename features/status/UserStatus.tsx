@@ -79,7 +79,6 @@ export const UserStatus: FC<IUserStatus> = ({
     setDisabledSwitch(true);
 
     const isInternet = await isInternetReachable();
-    console.log("isInternet", isInternet);
     if (!isInternet) {
       // TODO: show alert about internet reachability
       setDisabledSwitch(false);
