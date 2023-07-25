@@ -90,7 +90,9 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
         logoEnabled={false}
         attributionEnabled={false}
         zoomEnabled={true}
+        scaleBarEnabled={false}
         compassEnabled={true}
+        compassFadeWhenNorth={true}
         compassViewPosition={2}
         onDidFinishRenderingMapFully={handleDidFinishRenderingMapFully}
         onTouchStart={handleTouchStart}

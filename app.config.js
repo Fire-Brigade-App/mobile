@@ -29,7 +29,8 @@ export default {
       [
         "@rnmapbox/maps",
         {
-          RNMapboxMapsImpl: "maplibre",
+          RNMapboxMapsImpl: "mapbox",
+          RNMapboxMapsDownloadToken: process.env.MAPBOX_TOKEN || "",
         },
       ],
       ["@react-native-google-signin/google-signin"],
