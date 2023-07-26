@@ -3,13 +3,16 @@ import React, { FC } from "react";
 import { UserData } from "../../data/UserData";
 import { Status } from "../../constants/status";
 import { Role } from "../../constants/role";
+import { Activity } from "../../constants/Activity";
 
 const UsersSummary: FC<{ users: UserData[]; brigadeId: string }> = ({
   users,
   brigadeId,
 }) => {
-  const firefighters = users.filter((user) =>
-    [Status.NEAR, Status.FAR].includes(user?.brigades[brigadeId]?.status)
+  const firefighters = users.filter(
+    (user) =>
+      [Status.NEAR, Status.FAR].includes(user?.brigades[brigadeId]?.status) &&
+      Activity.ONLINE === user.activity
   );
 
   const commanders = firefighters.filter((user) =>

@@ -54,16 +54,12 @@ const Dashboard: FC = () => {
 };
 
 const styles = StyleSheet.create({
-  login: {
-    flex: 1,
-    alignSelf: "stretch",
-  },
   map: {
-    flex: 1,
+    flex: 3,
     alignSelf: "stretch",
   },
   content: {
-    flex: 1,
+    flex: 4,
     alignSelf: "stretch",
     backgroundColor: "#ffffff",
   },

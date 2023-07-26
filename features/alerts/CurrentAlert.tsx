@@ -1,9 +1,22 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
+import firestore from "@react-native-firebase/firestore";
+import { Button, XStack } from "tamagui";
+import { AntDesign } from "@expo/vector-icons";
 import { useAlerts } from "./userAlerts";
+import { useAuth } from "../authentication/auth";
+import { UserStatusInAlert } from "../../constants/UserStatusInAlarm";
 
 const CurrentAlert: FC = () => {
+  const { brigadeId, user } = useAuth();
   const { currentAlert } = useAlerts();
+  const [disableButtons, setDisableButtons] = useState(false);
+  const userStatusInAlert = currentAlert?.users[user.uid] as
+    | UserStatusInAlert
+    | undefined;
+  const confirmed = userStatusInAlert === UserStatusInAlert.CONFIRM;
+  const rejected = userStatusInAlert === UserStatusInAlert.REJECT;
+  const onTheWay = userStatusInAlert === UserStatusInAlert.ON_THE_WAY;
 
   const time = currentAlert?.added
     .toDate()
@@ -18,6 +31,28 @@ const CurrentAlert: FC = () => {
     return null;
   }
 
+  const handleDecision = async (state: UserStatusInAlert) => {
+    setDisableButtons(true);
+    if (
+      !(state === UserStatusInAlert.CONFIRM && confirmed) &&
+      !(state === UserStatusInAlert.REJECT && rejected)
+    ) {
+      try {
+        await firestore()
+          .collection("brigades")
+          .doc(brigadeId)
+          .collection("alerts")
+          .doc(currentAlert.id)
+          .update({
+            [`users.${user.uid}`]: state,
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    setDisableButtons(false);
+  };
+
   return (
     <View style={styles.alert}>
       <View style={styles.row}>
@@ -30,6 +65,24 @@ const CurrentAlert: FC = () => {
       <Text style={styles.details}>
         {source} {vehicles && ">"} {vehicles}
       </Text>
+      <XStack space="$2" justifyContent="flex-end">
+        <Button
+          disabled={disableButtons}
+          backgroundColor={rejected && "#f16581"}
+          iconAfter={<AntDesign name="dislike1" size={24} color="#DC143C" />}
+          onPress={() => handleDecision(UserStatusInAlert.REJECT)}
+        >
+          Reject
+        </Button>
+        <Button
+          disabled={disableButtons}
+          backgroundColor={(confirmed || onTheWay) && "#80d4a5"}
+          iconAfter={<AntDesign name="like1" size={24} color="#3CB371" />}
+          onPress={() => handleDecision(UserStatusInAlert.CONFIRM)}
+        >
+          Confirm
+        </Button>
+      </XStack>
     </View>
   );
 };
@@ -58,5 +111,6 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     fontSize: 12,
     textAlign: "right",
+    marginBottom: 5,
   },
 });

@@ -71,13 +71,18 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
   useEffect(() => {
     if (currentAlert?.location) {
       const { longitude, latitude } = currentAlert.location;
-      setAlertCoordinates([longitude, latitude]);
-      setFollowUserLocation(false);
-      cameraRef.current?.setCamera({
-        centerCoordinate: [longitude, latitude],
-        animationDuration: 500,
-        zoomLevel: 12,
-      });
+      if (
+        (alertCoordinates && longitude !== alertCoordinates[0]) ||
+        (alertCoordinates && latitude !== alertCoordinates[1])
+      ) {
+        setAlertCoordinates([longitude, latitude]);
+        setFollowUserLocation(false);
+        cameraRef.current?.setCamera({
+          centerCoordinate: [longitude, latitude],
+          animationDuration: 500,
+          zoomLevel: 12,
+        });
+      }
     } else {
       setAlertCoordinates(null);
     }

@@ -3,6 +3,9 @@ import firestore from "@react-native-firebase/firestore";
 import { UserDataWithUid } from "../../data/UserData";
 import { Status } from "../../constants/status";
 import { Activity } from "../../constants/Activity";
+import { useAlerts } from "../alerts/userAlerts";
+import { AlertWithId } from "../alerts/Alerts";
+import { UserStatusInAlert } from "../../constants/UserStatusInAlarm";
 
 const orderedStatuses = [Status.NEAR, Status.FAR, Status.OUT, Status.EMPTY];
 
@@ -30,8 +33,20 @@ const getTime = (user: UserDataWithUid, brigadeId: string) => {
   );
 };
 
+const orderedStatusInAlert = [
+  UserStatusInAlert.CONFIRM,
+  UserStatusInAlert.ON_THE_WAY,
+  UserStatusInAlert.REJECT,
+  undefined,
+];
+
+const getStatusInAlert = (user: UserDataWithUid, currentAlert: AlertWithId) => {
+  return orderedStatusInAlert.indexOf(currentAlert.users[user.uid]);
+};
+
 export const useUsers = (brigadeId: string) => {
   const [users, setUsers] = useState<UserDataWithUid[]>([]);
+  const { currentAlert } = useAlerts();
 
   useEffect(() => {
     const subscriber = firestore()
@@ -46,18 +61,30 @@ export const useUsers = (brigadeId: string) => {
         const users = documentSnapshot.docs.map(
           (doc) => ({ uid: doc.id, ...doc.data() } as UserDataWithUid)
         );
-        const sortedUsers = users.sort(
-          (a, b) =>
-            getActivityIndex(a) - getActivityIndex(b) ||
-            getStatusIndex(a, brigadeId) - getStatusIndex(b, brigadeId) ||
-            getTime(a, brigadeId) - getTime(b, brigadeId)
-        );
+        let sortedUsers = [];
+        if (currentAlert) {
+          sortedUsers = users.sort(
+            (a, b) =>
+              getStatusInAlert(a, currentAlert) -
+                getStatusInAlert(b, currentAlert) ||
+              getActivityIndex(a) - getActivityIndex(b) ||
+              getStatusIndex(a, brigadeId) - getStatusIndex(b, brigadeId) ||
+              getTime(a, brigadeId) - getTime(b, brigadeId)
+          );
+        } else {
+          sortedUsers = users.sort(
+            (a, b) =>
+              getActivityIndex(a) - getActivityIndex(b) ||
+              getStatusIndex(a, brigadeId) - getStatusIndex(b, brigadeId) ||
+              getTime(a, brigadeId) - getTime(b, brigadeId)
+          );
+        }
         setUsers(sortedUsers);
       });
 
     // Stop listening for updates when no longer required
     return () => subscriber();
-  }, [brigadeId]);
+  }, [brigadeId, currentAlert]);
 
   return { users };
 };

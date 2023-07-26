@@ -1,11 +1,12 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { FC } from "react";
-import { Screen } from "../screen/Screen";
-import { useAlerts } from "./userAlerts";
-import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import { Link, useRouter } from "expo-router";
-import { AlertType } from "../../constants/AlertType";
+import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import { Button } from "tamagui";
+import { AlertType } from "../../constants/AlertType";
+import { UserStatusInAlert } from "../../constants/UserStatusInAlarm";
+import { useAlerts } from "./userAlerts";
+import { Screen } from "../screen/Screen";
 
 export interface IAlert {
   added: FirebaseFirestoreTypes.Timestamp;
@@ -14,9 +15,9 @@ export interface IAlert {
   description: string;
   vehicles: string[];
   completed: FirebaseFirestoreTypes.Timestamp | null;
-  confirmedBy: string[];
-  rejectedBy: string[];
-  onTheWay: string[];
+  users: {
+    [userUid: string]: UserStatusInAlert;
+  };
   location: FirebaseFirestoreTypes.GeoPoint;
   source: string;
 }

@@ -1,9 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { FC, useMemo, useState } from "react";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import Roles from "./Roles";
 import Updated from "./Updated";
-import { UserData } from "../../data/UserData";
+import { UserDataWithUid } from "../../data/UserData";
 import { Activity } from "../../constants/Activity";
+import { useAlerts } from "../alerts/userAlerts";
+import { UserStatusInAlert } from "../../constants/UserStatusInAlarm";
 
 const formatTime = (time: string) => {
   if (time) {
@@ -17,7 +20,7 @@ const formatTime = (time: string) => {
 };
 
 const User: FC<{
-  userData: UserData;
+  userData: UserDataWithUid;
   brigadeId: string;
   showDetails?: boolean;
 }> = ({ userData, brigadeId, showDetails = true }) => {
@@ -36,6 +39,12 @@ const User: FC<{
   const styleColor = styles[`${color}Color`];
   const styleTime = styles[`${color}Time`];
 
+  const { currentAlert } = useAlerts();
+  const statusInAlert = currentAlert?.users[userData.uid];
+  const alertConfirmed = statusInAlert === UserStatusInAlert.CONFIRM;
+  const alertRejected = statusInAlert === UserStatusInAlert.REJECT;
+  const alertOnTheWay = statusInAlert === UserStatusInAlert.ON_THE_WAY;
+
   return (
     <>
       <Pressable
@@ -43,6 +52,19 @@ const User: FC<{
         onLongPress={() => setIsExpanded((prev) => !prev)}
       >
         <View style={[styles.status, styleColor]}></View>
+        {currentAlert && (
+          <View style={styles.statusInAlert}>
+            {alertConfirmed && (
+              <AntDesign name="like1" size={20} color="#3CB371" />
+            )}
+            {alertRejected && (
+              <AntDesign name="dislike1" size={20} color="#DC143C" />
+            )}
+            {alertOnTheWay && (
+              <MaterialIcons name="speed" size={20} color="#3CB371" />
+            )}
+          </View>
+        )}
         <Text style={styles.name}>
           {userData.firstName} {userData.lastName}
         </Text>
@@ -74,6 +96,9 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 8,
+  },
+  statusInAlert: {
+    marginRight: 8,
   },
   nearColor: {
     backgroundColor: "#3CB371",
