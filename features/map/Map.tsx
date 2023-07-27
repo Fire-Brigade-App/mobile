@@ -20,18 +20,18 @@ configMapbox();
 export const Map: FC<IMap> = ({ isUserTracked }) => {
   const cameraRef = useRef<Camera>(null);
   const [followUserLocation, setFollowUserLocation] = useState(true);
-  const [userLocation, setUserLocation] = useState([0, 0]);
+  const [userLocation, setUserLocation] = useState(null);
   const [brigadeCoordinates, setBrigadeCoordinates] = useState(null);
   const [alertCoordinates, setAlertCoordinates] = useState(null);
   const { brigade } = useBrigade();
   const { currentAlert } = useAlerts();
 
-  const handleDidFinishRenderingMapFully = () => {
-    const centerCoordinate = userLocation[0]
-      ? userLocation
-      : alertCoordinates
+  const setCenterCoordinate = () => {
+    const centerCoordinate = alertCoordinates
       ? alertCoordinates
-      : brigadeCoordinates;
+      : userLocation
+      ? userLocation
+      : brigadeCoordinates ?? [0, 0];
     cameraRef.current?.setCamera({
       animationDuration: 0,
       centerCoordinate,
@@ -55,7 +55,7 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
 
   const centerOnUserLocation = () => {
     cameraRef.current?.setCamera({
-      centerCoordinate: userLocation[0] ? userLocation : brigadeCoordinates,
+      centerCoordinate: userLocation ?? brigadeCoordinates,
       animationDuration: 500,
     });
     setFollowUserLocation(true);
@@ -69,24 +69,24 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
   }, [brigade?.location]);
 
   useEffect(() => {
-    if (currentAlert?.location) {
+    if (!currentAlert || !currentAlert?.location) {
+      setAlertCoordinates(null);
+    } else if (currentAlert?.location) {
       const { longitude, latitude } = currentAlert.location;
       if (
+        !alertCoordinates ||
         (alertCoordinates && longitude !== alertCoordinates[0]) ||
         (alertCoordinates && latitude !== alertCoordinates[1])
       ) {
         setAlertCoordinates([longitude, latitude]);
         setFollowUserLocation(false);
-        cameraRef.current?.setCamera({
-          centerCoordinate: [longitude, latitude],
-          animationDuration: 500,
-          zoomLevel: 12,
-        });
       }
-    } else {
-      setAlertCoordinates(null);
     }
-  }, [currentAlert?.location]);
+  }, [currentAlert]);
+
+  useEffect(() => {
+    setCenterCoordinate();
+  }, [alertCoordinates]);
 
   return (
     <>
@@ -99,7 +99,7 @@ export const Map: FC<IMap> = ({ isUserTracked }) => {
         compassEnabled={true}
         compassFadeWhenNorth={true}
         compassViewPosition={2}
-        onDidFinishRenderingMapFully={handleDidFinishRenderingMapFully}
+        onDidFinishLoadingMap={setCenterCoordinate}
         onTouchStart={handleTouchStart}
       >
         {isUserTracked && (
