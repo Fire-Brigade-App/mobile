@@ -11,7 +11,7 @@ const CurrentAlert: FC = () => {
   const { brigadeId, user } = useAuth();
   const { currentAlert } = useAlerts();
   const [disableButtons, setDisableButtons] = useState(false);
-  const userStatusInAlert = currentAlert?.users[user.uid] as
+  const userStatusInAlert = currentAlert?.users[user?.uid] as
     | UserStatusInAlert
     | undefined;
   const confirmed = userStatusInAlert === UserStatusInAlert.CONFIRM;

@@ -4,29 +4,39 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { UserData } from "../../data/UserData";
 import { BrigadePermissions } from "../../constants/brigadePermissions";
-import { storeData } from "../../utils/asyncStorage";
+import { getData, storeData } from "../../utils/asyncStorage";
 import { LocalStorage } from "../../constants/localStorage";
 import { Status } from "../../constants/status";
 
-const getUserData = async (user: FirebaseAuthTypes.User) => {
-  const userData = await firestore().collection("users").doc(user.uid).get();
-  if (userData.exists) {
-    const data = userData.data();
-    return data;
+const getBrigadeData = async (brigadeId: string) => {
+  try {
+    const brigadeData = await firestore()
+      .collection("brigades")
+      .doc(brigadeId)
+      .get();
+    if (brigadeData.exists) {
+      const data = brigadeData.data();
+      return data;
+    }
+    return null;
+  } catch (error) {
+    console.error(error);
   }
-  return null;
 };
 
-const getBrigadeData = async (brigadeId: string) => {
-  const brigadeData = await firestore()
-    .collection("brigades")
-    .doc(brigadeId)
-    .get();
-  if (brigadeData.exists) {
-    const data = brigadeData.data();
-    return data;
+const updateFcmToken = async (userUid: string, oldFcmToken: string) => {
+  const fcmToken = await getData("fcmToken");
+  if (fcmToken && fcmToken !== oldFcmToken) {
+    try {
+      await firestore().collection("users").doc(userUid).update({ fcmToken });
+    } catch (error) {
+      console.error(error);
+    }
   }
-  return null;
+};
+
+const storeUserUid = async (user: FirebaseAuthTypes.User) => {
+  await storeData(LocalStorage.USER_UID, user.uid);
 };
 
 export const signOut = async () => {
@@ -136,46 +146,24 @@ export const AuthProvider = (props) => {
     let subscriber: () => void;
 
     if (user) {
+      storeUserUid(user);
+
       subscriber = firestore()
         .collection("users")
         .doc(user.uid)
-        .onSnapshot((documentSnapshot) => {
-          const useData = documentSnapshot.data() as UserData;
-          console.log("User data: ", useData);
-          if (useData) {
-            setUserData(useData);
-            // Stop listening for updates after initial update user data
-            // subscriber();
+        .onSnapshot(async (documentSnapshot) => {
+          const userData = documentSnapshot.data() as UserData;
+          console.log("User data: ", userData);
+          if (userData) {
+            setUserData(userData);
+            updateFcmToken(user.uid, userData.fcmToken);
+            setInitializing(false);
           }
         });
     }
 
     // Stop listening for updates when no longer required
     return () => subscriber && subscriber();
-  }, [user]);
-
-  // Fetching signed in user data
-  useEffect(() => {
-    let didCancel = false;
-
-    const storeUserUid = async (user: FirebaseAuthTypes.User) => {
-      await storeData(LocalStorage.USER_UID, user.uid);
-    };
-
-    const fetchUserData = async (user: FirebaseAuthTypes.User) => {
-      const userData = await getUserData(user);
-      if (!didCancel) setUserData(userData as UserData);
-      setInitializing(false);
-    };
-
-    if (user) {
-      storeUserUid(user);
-      fetchUserData(user);
-    }
-
-    return () => {
-      didCancel = true;
-    };
   }, [user]);
 
   useEffect(() => {
