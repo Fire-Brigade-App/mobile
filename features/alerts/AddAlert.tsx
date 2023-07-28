@@ -2,7 +2,6 @@ import { StyleSheet, View } from "react-native";
 import React, { FC, useState } from "react";
 import { Screen } from "../screen/Screen";
 import { contentStyle } from "../../styles/content";
-import { Loader } from "../../components/loader/Loader";
 import { Text, Input, Button, YStack, Label, YGroup } from "tamagui";
 import { AlertType } from "../../constants/AlertType";
 import { post } from "../../api/api";
@@ -10,20 +9,30 @@ import { useAuth } from "../authentication/auth";
 import { useBrigade } from "../status/useBrigade";
 import { countriesMap } from "../../utils/countries";
 import { useRouter } from "expo-router";
+import ModalButton from "../../components/ModalButton";
 
 interface AlertData {
-  address: string;
-  country: string;
-  municipality: string;
-  description: string;
-  type: AlertType;
+  address?: string;
+  country?: string;
+  municipality?: string;
+  description?: string;
+  type?: AlertType;
   author: string;
-  source: string;
+  source?: string;
 }
 
-const postAlert = async (brigadeId: string, alert: AlertData) => {
+const addAlert = async (brigadeId: string, alert: AlertData) => {
   try {
     const response = await post(`/alerts/${brigadeId}`, alert);
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const addAlertAndCheckERemiza = async (brigadeId: string, alert: AlertData) => {
+  try {
+    const response = await post(`/eremiza/${brigadeId}`, alert);
     return response;
   } catch (err) {
     console.error(err);
@@ -36,20 +45,20 @@ const AddAlert: FC = () => {
   const router = useRouter();
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState(AlertType.FIRE);
+  const [type, setType] = useState(AlertType.ALERT);
   const [loading, setLoading] = useState(false);
-  const [submitDisabled, setSubmitDisabled] = useState(false);
   const [error, setError] = useState("");
   const author = `${userData?.firstName} ${userData?.lastName}`;
   const country = countriesMap[brigade?.country];
   const municipality = brigade?.municipality;
   const source = "user";
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleAddAlert = async () => {
     setLoading(true);
 
     try {
-      await postAlert(brigadeId, {
+      await addAlert(brigadeId, {
         address,
         country,
         municipality,
@@ -57,6 +66,26 @@ const AddAlert: FC = () => {
         type,
         author,
         source,
+      });
+
+      setAddress("");
+      setDescription("");
+      setType(AlertType.FIRE);
+      router.replace("/dashboard");
+    } catch (error) {
+      console.error(error);
+    }
+    setLoading(false);
+  };
+
+  const handleAddAlertAndCheckERemiza = async () => {
+    setLoading(true);
+
+    try {
+      await addAlertAndCheckERemiza(brigadeId, {
+        address,
+        description: description || "Loading alert from e-Remiza...",
+        author,
       });
 
       setAddress("");
@@ -134,13 +163,17 @@ const AddAlert: FC = () => {
             </YGroup>
           </>
 
-          <Button
-            alignSelf="flex-end"
-            disabled={submitDisabled}
-            onPress={handleAddAlert}
-          >
-            {loading ? <Loader /> : "Send alert"}
-          </Button>
+          <ModalButton
+            buttonText="Send alert"
+            modalText="Are you sure?"
+            onConfirm={handleAddAlert}
+          />
+          <Text style={styles.or}>or</Text>
+          <ModalButton
+            buttonText="Send alert & check e-Remiza"
+            modalText="Are you sure?"
+            onConfirm={handleAddAlertAndCheckERemiza}
+          />
         </YStack>
       </View>
     </Screen>
@@ -153,5 +186,8 @@ const styles = StyleSheet.create({
   content: contentStyle,
   error: {
     color: "red",
+  },
+  or: {
+    textAlign: "right",
   },
 });

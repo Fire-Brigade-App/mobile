@@ -25,6 +25,7 @@ const CurrentAlert: FC = () => {
   const type = currentAlert?.type.toUpperCase();
   const description = currentAlert?.description;
   const source = currentAlert?.source;
+  const author = currentAlert?.author;
   const vehicles = currentAlert?.vehicles.map((vehicle) => vehicle).join(", ");
 
   if (!currentAlert) {
@@ -63,7 +64,7 @@ const CurrentAlert: FC = () => {
       </View>
       <Text style={styles.description}>{description}</Text>
       <Text style={styles.details}>
-        {source} {vehicles && ">"} {vehicles}
+        {author} ({source}) {vehicles && ">"} {vehicles}
       </Text>
       <XStack space="$2" justifyContent="flex-end">
         <Button

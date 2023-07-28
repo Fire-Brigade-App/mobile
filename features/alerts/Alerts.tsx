@@ -7,6 +7,7 @@ import { AlertType } from "../../constants/AlertType";
 import { UserStatusInAlert } from "../../constants/UserStatusInAlarm";
 import { useAlerts } from "./userAlerts";
 import { Screen } from "../screen/Screen";
+import { colors } from "../../styles/colors";
 
 export interface IAlert {
   added: FirebaseFirestoreTypes.Timestamp;
@@ -20,6 +21,7 @@ export interface IAlert {
   };
   location: FirebaseFirestoreTypes.GeoPoint;
   source: string;
+  author: string;
 }
 
 export interface AlertWithId extends IAlert {
@@ -30,6 +32,7 @@ const AlertItem: FC<{ alert: AlertWithId }> = ({ alert }) => {
   const date = alert.added.toDate().toLocaleDateString();
   const time = alert.added.toDate().toLocaleTimeString();
   const type = alert.type[0].toUpperCase();
+  const currentAlert = !alert.completed;
 
   return (
     <Link
@@ -37,7 +40,7 @@ const AlertItem: FC<{ alert: AlertWithId }> = ({ alert }) => {
         pathname: "/alerts/[id]",
         params: { id: alert.id },
       }}
-      style={styles.alert}
+      style={[styles.alert, currentAlert && styles.currentAlert]}
     >
       <View>
         <Text>
@@ -63,14 +66,6 @@ const Alerts: FC = () => {
           renderItem={({ item }) => <AlertItem alert={item} />}
           style={styles.alerts}
         />
-        <Button
-          alignSelf="flex-end"
-          onPress={() => {
-            router.push("/alerts/add");
-          }}
-        >
-          Add alert
-        </Button>
       </View>
     </Screen>
   );
@@ -94,5 +89,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#ffffff",
     padding: 15,
+  },
+  currentAlert: {
+    backgroundColor: colors.alert,
   },
 });
