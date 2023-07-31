@@ -11,4 +11,5 @@ export interface Brigade {
   permissions: { [userUid: string]: BrigadePermissions[] };
   status: BrigadeStatus;
   alerts: string[];
+  vehicles: string[];
 }
