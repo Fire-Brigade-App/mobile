@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRouter, useSegments } from "expo-router";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import { UserData } from "../../data/UserData";
+import { UserData, UserDataWithUid } from "../../data/UserData";
 import { BrigadePermissions } from "../../constants/BrigadePermissions";
 import { getData, storeData } from "../../utils/asyncStorage";
 import { LocalStorage } from "../../constants/LocalStorage";
@@ -48,7 +48,7 @@ export const signOut = async () => {
 interface IAuthContext {
   initializing: boolean;
   user: FirebaseAuthTypes.User;
-  userData: UserData;
+  userData: UserDataWithUid;
   brigadeId: string;
   isAccepted: boolean;
 }
@@ -125,7 +125,7 @@ export const AuthProvider = (props) => {
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User>(null);
-  const [userData, setUserData] = useState<UserData>(null);
+  const [userData, setUserData] = useState<UserDataWithUid>(null);
   const [brigadeId, setBrigadeId] = useState<string>(null);
   const [isAccepted, setIsAccepted] = useState(false);
 
@@ -155,7 +155,7 @@ export const AuthProvider = (props) => {
           const userData = documentSnapshot.data() as UserData;
           console.log("User data: ", userData);
           if (userData) {
-            setUserData(userData);
+            setUserData({ ...userData, uid: user.uid });
             updateFcmToken(user.uid, userData.fcmToken);
             setInitializing(false);
           }
