@@ -3,10 +3,10 @@ import { useRouter, useSegments } from "expo-router";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { UserData } from "../../data/UserData";
-import { BrigadePermissions } from "../../constants/brigadePermissions";
+import { BrigadePermissions } from "../../constants/BrigadePermissions";
 import { getData, storeData } from "../../utils/asyncStorage";
-import { LocalStorage } from "../../constants/localStorage";
-import { Status } from "../../constants/status";
+import { LocalStorage } from "../../constants/LocalStorage";
+import { Status } from "../../constants/Status";
 
 const getBrigadeData = async (brigadeId: string) => {
   try {

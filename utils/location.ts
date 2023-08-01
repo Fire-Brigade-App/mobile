@@ -1,7 +1,7 @@
 import * as TaskManager from "expo-task-manager";
 import * as Location from "expo-location";
 import { getData, storeData } from "./asyncStorage";
-import { LocalStorage } from "../constants/localStorage";
+import { LocalStorage } from "../constants/LocalStorage";
 import { put } from "../api/api";
 
 const LOCATION_TASK_NAME = "background-location-task";

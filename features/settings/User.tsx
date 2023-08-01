@@ -7,10 +7,10 @@ import { UserData } from "../../data/UserData";
 import { contentStyle } from "../../styles/content";
 import { formatDistance } from "date-fns";
 import { titleStyle } from "../../styles/title";
-import { Role } from "../../constants/role";
+import { Role } from "../../constants/Role";
 import { useBrigade } from "../status/useBrigade";
-import { BrigadePermissions } from "../../constants/brigadePermissions";
-import { Status } from "../../constants/status";
+import { BrigadePermissions } from "../../constants/BrigadePermissions";
+import { Status } from "../../constants/Status";
 
 const User: FC<{ userUid: string }> = ({ userUid }) => {
   const { brigadeId, user } = useAuth();

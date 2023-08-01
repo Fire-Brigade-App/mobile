@@ -14,10 +14,10 @@ import { StyleSheet, Switch, Text, View } from "react-native";
 import { useAuth } from "../authentication/auth";
 import User from "./User";
 import { storeData } from "../../utils/asyncStorage";
-import { LocalStorage } from "../../constants/localStorage";
+import { LocalStorage } from "../../constants/LocalStorage";
 import { Activity } from "../../constants/Activity";
 import firestore from "@react-native-firebase/firestore";
-import { Status } from "../../constants/status";
+import { Status } from "../../constants/Status";
 import { isInternetReachable } from "../../utils/network";
 
 interface IUserStatus {

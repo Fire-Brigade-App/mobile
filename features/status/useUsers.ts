@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
 import { UserDataWithUid } from "../../data/UserData";
-import { Status } from "../../constants/status";
+import { Status } from "../../constants/Status";
 import { Activity } from "../../constants/Activity";
 import { useAlerts } from "../alerts/userAlerts";
 import { AlertWithId } from "../alerts/Alerts";

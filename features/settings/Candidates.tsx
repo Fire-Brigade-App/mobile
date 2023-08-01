@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import React, { FC, useEffect, useState } from "react";
-import { Status } from "../../constants/status";
+import { Status } from "../../constants/Status";
 import firestore from "@react-native-firebase/firestore";
 import { UserData, UserDataWithUid } from "../../data/UserData";
 import { useAuth } from "../authentication/auth";

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { FlatList, StyleSheet, Text } from "react-native";
-import { Role } from "../../constants/role";
+import { Role } from "../../constants/Role";
 
 const rolesMap = {
   [Role.DRIVER]: "D",

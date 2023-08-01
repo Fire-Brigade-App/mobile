@@ -1,6 +1,6 @@
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-import { BrigadeStatus } from "../constants/brigadeStatus";
-import { BrigadePermissions } from "../constants/brigadePermissions";
+import { BrigadeStatus } from "../constants/BrigadeStatus";
+import { BrigadePermissions } from "../constants/BrigadePermissions";
 
 export interface Brigade {
   name: string;

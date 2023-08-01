@@ -3,7 +3,7 @@ import { useAuth } from "../authentication/auth";
 import firestore from "@react-native-firebase/firestore";
 import { IAlert } from "./Alerts";
 import { useAlerts } from "./userAlerts";
-import { BrigadeStatus } from "../../constants/brigadeStatus";
+import { BrigadeStatus } from "../../constants/BrigadeStatus";
 
 export const useAlert = (alertId: string) => {
   const { alerts } = useAlerts();

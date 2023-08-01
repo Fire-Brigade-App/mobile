@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../authentication/auth";
 import { Brigade } from "../../data/Brigade";
-import { BrigadeStatus } from "../../constants/brigadeStatus";
+import { BrigadeStatus } from "../../constants/BrigadeStatus";
 
 export const useBrigade = () => {
   const { brigadeId } = useAuth();

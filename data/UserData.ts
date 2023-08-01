@@ -1,6 +1,6 @@
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-import { Status } from "../constants/status";
-import { Role } from "../constants/role";
+import { Status } from "../constants/Status";
+import { Role } from "../constants/Role";
 import { Activity } from "../constants/Activity";
 
 export interface UserData {

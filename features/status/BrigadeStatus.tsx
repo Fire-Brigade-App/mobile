@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import UsersList from "./UsersList";
 import UsersSummary from "./UsersSummary";
 import { useUsers } from "./useUsers";
-import { Status } from "../../constants/status";
+import { Status } from "../../constants/Status";
 import { useAuth } from "../authentication/auth";
 import { Activity } from "../../constants/Activity";
 
