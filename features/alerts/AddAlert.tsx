@@ -1,15 +1,15 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import React, { FC, useState } from "react";
+import { useRouter } from "expo-router";
 import { Screen } from "../screen/Screen";
 import { contentStyle } from "../../styles/content";
-import { Text, Input, Button, YStack, Label, YGroup } from "tamagui";
 import { AlertType } from "../../constants/AlertType";
 import { post } from "../../api/api";
 import { useAuth } from "../authentication/auth";
 import { useBrigade } from "../status/useBrigade";
 import { countriesMap } from "../../utils/countries";
-import { useRouter } from "expo-router";
 import ModalButton from "../../components/ModalButton";
+import Group from "../../components/Group";
 
 interface AlertData {
   address?: string;
@@ -46,17 +46,12 @@ const AddAlert: FC = () => {
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState(AlertType.ALERT);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const author = `${userData?.firstName} ${userData?.lastName}`;
   const country = countriesMap[brigade?.country];
   const municipality = brigade?.municipality;
   const source = "user";
-  const [modalVisible, setModalVisible] = useState(false);
 
   const handleAddAlert = async () => {
-    setLoading(true);
-
     try {
       await addAlert(brigadeId, {
         address,
@@ -75,12 +70,9 @@ const AddAlert: FC = () => {
     } catch (error) {
       console.error(error);
     }
-    setLoading(false);
   };
 
   const handleAddAlertAndCheckERemiza = async () => {
-    setLoading(true);
-
     try {
       await addAlertAndCheckERemiza(brigadeId, {
         address,
@@ -95,86 +87,48 @@ const AddAlert: FC = () => {
     } catch (error) {
       console.error(error);
     }
-    setLoading(false);
   };
 
   return (
     <Screen>
       <View style={styles.content}>
-        {Boolean(error) && <Text style={styles.error}>{error}</Text>}
-        <YStack space="$3">
-          <>
-            <Label htmlFor="address">Address</Label>
-            <Input id="address" value={address} onChangeText={setAddress} />
-          </>
-          <>
-            <Label htmlFor="description">Description</Label>
-            <Input value={description} onChangeText={setDescription} />
-          </>
-          <>
-            <Label>Type</Label>
-            <YGroup>
-              <YGroup.Item>
-                <Button
-                  backgroundColor={
-                    AlertType.FIRE === type ? "$backgroundFocus" : "$background"
-                  }
-                  onPress={() => setType(AlertType.FIRE)}
-                >
-                  {AlertType.FIRE}
-                </Button>
-              </YGroup.Item>
-              <YGroup.Item>
-                <Button
-                  backgroundColor={
-                    AlertType.ACCIDENT === type
-                      ? "$backgroundFocus"
-                      : "$background"
-                  }
-                  onPress={() => setType(AlertType.ACCIDENT)}
-                >
-                  {AlertType.ACCIDENT}
-                </Button>
-              </YGroup.Item>
-              <YGroup.Item>
-                <Button
-                  backgroundColor={
-                    AlertType.THREAT === type
-                      ? "$backgroundFocus"
-                      : "$background"
-                  }
-                  onPress={() => setType(AlertType.THREAT)}
-                >
-                  {AlertType.THREAT}
-                </Button>
-              </YGroup.Item>
-              <YGroup.Item>
-                <Button
-                  backgroundColor={
-                    AlertType.PLANNED === type
-                      ? "$backgroundFocus"
-                      : "$background"
-                  }
-                  onPress={() => setType(AlertType.PLANNED)}
-                >
-                  {AlertType.PLANNED}
-                </Button>
-              </YGroup.Item>
-            </YGroup>
-          </>
+        <Text style={styles.label}>Address</Text>
+        <TextInput
+          style={[styles.info, styles.input]}
+          value={address}
+          onChangeText={setAddress}
+        />
+        <Text style={styles.label}>Description</Text>
+        <TextInput
+          style={[styles.info, styles.input]}
+          value={description}
+          onChangeText={setDescription}
+        />
+        <Text style={styles.label}>Type</Text>
+        <Group
+          style={styles.info}
+          items={[
+            { label: AlertType.FIRE, value: AlertType.FIRE },
+            { label: AlertType.ACCIDENT, value: AlertType.ACCIDENT },
+            { label: AlertType.THREAT, value: AlertType.THREAT },
+            { label: AlertType.TRAINING, value: AlertType.TRAINING },
+            { label: AlertType.PLANNED, value: AlertType.PLANNED },
+          ]}
+          value={type}
+          onChange={(value) => setType(value as AlertType)}
+        />
 
-          <ModalButton
-            buttonText="Send alert"
-            modalText="Are you sure?"
-            onConfirm={handleAddAlert}
-          />
-          <Text style={styles.or}>or</Text>
-          <ModalButton
-            buttonText="Send alert & check e-Remiza"
-            modalText="Are you sure?"
-            onConfirm={handleAddAlertAndCheckERemiza}
-          />
-        </YStack>
+        <ModalButton
+          buttonText="Send alert"
+          modalText="Are you sure?"
+          onConfirm={handleAddAlert}
+        />
+        <Text style={styles.or}>or</Text>
+        <ModalButton
+          buttonText="Send alert & check e-Remiza"
+          modalText="Are you sure?"
+          onConfirm={handleAddAlertAndCheckERemiza}
+        />
       </View>
     </Screen>
   );
@@ -189,5 +143,21 @@ const styles = StyleSheet.create({
   },
   or: {
     textAlign: "right",
+  },
+  label: {
+    fontSize: 12,
+    color: "#777777",
+  },
+  info: {
+    marginVertical: 8,
+    minWidth: 100,
+  },
+  input: {
+    borderColor: "#cccccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    color: "#000000",
   },
 });
