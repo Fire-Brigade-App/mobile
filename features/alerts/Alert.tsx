@@ -320,6 +320,7 @@ const styles = StyleSheet.create({
   scollView: {
     flex: 1,
     backgroundColor: "#ffffff",
+    width: "100%",
   },
   content: contentStyle,
   headerButton: {

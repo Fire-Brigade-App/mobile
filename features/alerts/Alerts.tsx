@@ -2,7 +2,6 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { FC } from "react";
 import { Link, useRouter } from "expo-router";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-import { Button } from "tamagui";
 import { AlertType } from "../../constants/AlertType";
 import { UserStatusInAlert } from "../../constants/UserStatusInAlarm";
 import { useAlerts } from "./userAlerts";

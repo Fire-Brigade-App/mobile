@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { FC, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
-import { Button, XStack } from "tamagui";
 import { AntDesign } from "@expo/vector-icons";
 import { useAlerts } from "./userAlerts";
 import { useAuth } from "../authentication/auth";
 import { UserStatusInAlert } from "../../constants/UserStatusInAlarm";
+import XStack from "../../components/XStack";
 
 const CurrentAlert: FC = () => {
   const { brigadeId, user } = useAuth();
@@ -66,23 +66,36 @@ const CurrentAlert: FC = () => {
       <Text style={styles.details}>
         {author} ({source}) {vehicles && ">"} {vehicles}
       </Text>
-      <XStack space="$2" justifyContent="flex-end">
-        <Button
+      <XStack style={styles.buttons}>
+        <Pressable
           disabled={disableButtons}
-          backgroundColor={rejected && "#f16581"}
-          iconAfter={<AntDesign name="dislike1" size={24} color="#DC143C" />}
+          style={[styles.button, rejected && styles.rejectButtonPressed]}
           onPress={() => handleDecision(UserStatusInAlert.REJECT)}
         >
-          Reject
-        </Button>
-        <Button
+          <Text>Reject</Text>
+          <AntDesign
+            name="dislike1"
+            size={24}
+            color="#DC143C"
+            style={styles.thumb}
+          />
+        </Pressable>
+        <Pressable
           disabled={disableButtons}
-          backgroundColor={(confirmed || onTheWay) && "#80d4a5"}
-          iconAfter={<AntDesign name="like1" size={24} color="#3CB371" />}
+          style={[
+            styles.button,
+            (confirmed || onTheWay) && styles.confirmButtonPressed,
+          ]}
           onPress={() => handleDecision(UserStatusInAlert.CONFIRM)}
         >
-          Confirm
-        </Button>
+          <Text>Confirm</Text>
+          <AntDesign
+            name="like1"
+            size={24}
+            color="#3CB371"
+            style={styles.thumb}
+          />
+        </Pressable>
       </XStack>
     </View>
   );
@@ -113,5 +126,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "right",
     marginBottom: 5,
+  },
+  buttons: {
+    justifyContent: "flex-end",
+  },
+  button: {
+    flexDirection: "row",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: "#444444",
+    borderRadius: 10,
+  },
+  rejectButtonPressed: {
+    backgroundColor: "#f16581",
+  },
+  confirmButtonPressed: {
+    backgroundColor: "#80d4a5",
+  },
+  thumb: {
+    marginLeft: 5,
   },
 });
