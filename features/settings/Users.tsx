@@ -4,9 +4,8 @@ import { Status } from "../../constants/status";
 import firestore from "@react-native-firebase/firestore";
 import { UserData, UserDataWithUid } from "../../data/UserData";
 import { useAuth } from "../authentication/auth";
-import { titleStyle } from "../../styles/title";
-import { contentStyle } from "../../styles/content";
 import { Link } from "expo-router";
+import { colors } from "../../styles/colors";
 
 const UserItem: FC<{ userData: UserDataWithUid }> = ({ userData }) => {
   return (
@@ -19,7 +18,7 @@ const UserItem: FC<{ userData: UserDataWithUid }> = ({ userData }) => {
         asChild
       >
         <Text style={styles.name}>
-          {userData.firstName} {userData.lastName}
+          {userData.lastName} {userData.firstName}
         </Text>
       </Link>
     </View>
@@ -40,10 +39,12 @@ const Users: FC = () => {
         Status.EMPTY,
       ])
       .onSnapshot((documentSnapshot) => {
-        const users = documentSnapshot.docs.map((doc) => ({
-          uid: doc.id,
-          ...(doc.data() as UserData),
-        }));
+        const users = documentSnapshot.docs
+          .map((doc) => ({
+            uid: doc.id,
+            ...(doc.data() as UserData),
+          }))
+          .sort((a, b) => a.lastName.localeCompare(b.lastName));
         setUsers(users);
       });
 
@@ -70,20 +71,23 @@ const Users: FC = () => {
 export default Users;
 
 const styles = StyleSheet.create({
-  content: contentStyle,
-  title: titleStyle,
+  content: {
+    width: "100%",
+    flex: 1,
+    justifyContent: "flex-start",
+    marginTop: 8,
+  },
   user: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderColor: "#eeeeee",
-    borderWidth: 2,
+    marginHorizontal: 20,
+    marginVertical: 8,
+    borderColor: "#dddddd",
+    borderTopColor: colors.blue,
+    borderWidth: 1,
     borderRadius: 15,
-    marginTop: 10,
-    padding: 8,
+    backgroundColor: "#ffffff",
+    padding: 15,
   },
   name: {
-    color: "#2196F3",
     marginLeft: 8,
   },
   buttons: {

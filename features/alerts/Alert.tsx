@@ -19,6 +19,8 @@ import XStack from "../../components/XStack";
 import { Loader } from "../../components/loader/Loader";
 import { AlertType } from "../../constants/AlertType";
 import { useBrigade } from "../status/useBrigade";
+import { labelStyle } from "../../styles/label";
+import { inputStyle } from "../../styles/input";
 
 const Alert: FC<{ alertId: string }> = ({ alertId }) => {
   const { brigade } = useBrigade();
@@ -331,22 +333,12 @@ const styles = StyleSheet.create({
     marginLeft: 2,
     fontWeight: "500",
   },
-  label: {
-    fontSize: 12,
-    color: "#777777",
-  },
+  label: labelStyle,
   info: {
     marginVertical: 8,
     minWidth: 100,
   },
-  input: {
-    borderColor: "#cccccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    color: "#000000",
-  },
+  input: inputStyle,
   inputDisabled: {
     backgroundColor: "#cccccc",
   },
@@ -355,7 +347,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
-    paddingVertical: 4,
+    paddingVertical: 6,
   },
   selectValue: {
     fontSize: 14,

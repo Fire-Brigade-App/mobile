@@ -55,7 +55,6 @@ const AlertItem: FC<{ alert: AlertWithId }> = ({ alert }) => {
 
 const Alerts: FC = () => {
   const { alerts } = useAlerts();
-  const router = useRouter();
 
   return (
     <Screen>
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
   content: {
     width: "100%",
     flex: 1,
-    justifyContent: "flex-start" as const,
+    justifyContent: "flex-start",
     marginTop: 8,
   },
   alerts: {},
@@ -84,6 +83,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 8,
     borderColor: "#dddddd",
+    borderTopColor: colors.blue,
     borderWidth: 1,
     borderRadius: 15,
     backgroundColor: "#ffffff",

@@ -69,7 +69,11 @@ const CurrentAlert: FC = () => {
       <XStack style={styles.buttons}>
         <Pressable
           disabled={disableButtons}
-          style={[styles.button, rejected && styles.rejectButtonPressed]}
+          style={[
+            styles.button,
+            styles.reject,
+            rejected && styles.rejectButtonPressed,
+          ]}
           onPress={() => handleDecision(UserStatusInAlert.REJECT)}
         >
           <Text>Reject</Text>
@@ -84,6 +88,7 @@ const CurrentAlert: FC = () => {
           disabled={disableButtons}
           style={[
             styles.button,
+            styles.confirm,
             (confirmed || onTheWay) && styles.confirmButtonPressed,
           ]}
           onPress={() => handleDecision(UserStatusInAlert.CONFIRM)}
@@ -135,8 +140,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderWidth: 1,
-    borderColor: "#444444",
     borderRadius: 10,
+  },
+  reject: {
+    borderColor: "#DC143C",
+  },
+  confirm: {
+    borderColor: "#3CB371",
   },
   rejectButtonPressed: {
     backgroundColor: "#f16581",

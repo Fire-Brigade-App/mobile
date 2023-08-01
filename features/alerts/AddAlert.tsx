@@ -10,6 +10,8 @@ import { useBrigade } from "../status/useBrigade";
 import { countriesMap } from "../../utils/countries";
 import ModalButton from "../../components/ModalButton";
 import Group from "../../components/Group";
+import { inputStyle } from "../../styles/input";
+import { labelStyle } from "../../styles/label";
 
 interface AlertData {
   address?: string;
@@ -144,20 +146,10 @@ const styles = StyleSheet.create({
   or: {
     textAlign: "right",
   },
-  label: {
-    fontSize: 12,
-    color: "#777777",
-  },
+  label: labelStyle,
   info: {
     marginVertical: 8,
     minWidth: 100,
   },
-  input: {
-    borderColor: "#cccccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    color: "#000000",
-  },
+  input: inputStyle,
 });

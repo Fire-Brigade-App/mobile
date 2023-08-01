@@ -22,6 +22,7 @@ import { titleStyle } from "../../styles/title";
 import TextButton from "../../components/TextButton";
 import { contentStyle } from "../../styles/content";
 import { Activity } from "../../constants/Activity";
+import { labelStyle } from "../../styles/label";
 
 interface BrigadeWithUid extends Brigade {
   uid: string;
@@ -79,6 +80,7 @@ const createBrigade = async (brigadeData: NewBrigadeData) => {
     permissions: { [userUid]: [BrigadePermissions.ADMIN] },
     status: BrigadeStatus.STANDBY,
     alerts: [],
+    vehicles: [],
   };
 
   const brigadeDocRef = await firestore()
@@ -212,12 +214,14 @@ const UserBrigadeForm: FC<{ isInitial?: boolean }> = ({
       {isInitial && <Text style={styles.title}>Your fire brigade</Text>}
       {/* Show text input for searcing brigades if none is selected */}
       {!brigade && (
-        <TextInput
-          style={styles.input}
-          placeholder="fire brigade"
-          value={searchBrigade}
-          onChangeText={setSearchBrigade}
-        />
+        <>
+          <Text style={styles.label}>Fire brigade</Text>
+          <TextInput
+            style={styles.input}
+            value={searchBrigade}
+            onChangeText={setSearchBrigade}
+          />
+        </>
       )}
 
       {isCreatingBrigade ? (
@@ -254,14 +258,17 @@ const UserBrigadeForm: FC<{ isInitial?: boolean }> = ({
           />
         </>
       ) : !!brigade ? (
-        <View style={[styles.brigadeItem, styles.brigadeSelected]}>
-          <Text>
-            {brigade.name} ({brigade.province}, {brigade.municipality})
-          </Text>
-          <Pressable onPress={() => setBrigade(null)}>
-            <AntDesign name="closecircleo" size={24} color="#2196F3" />
-          </Pressable>
-        </View>
+        <>
+          <Text style={styles.label}>Fire brigade</Text>
+          <View style={[styles.input, styles.brigadeSelected]}>
+            <Text>
+              {brigade.name} ({brigade.province}, {brigade.municipality})
+            </Text>
+            <Pressable onPress={() => setBrigade(null)}>
+              <AntDesign name="closecircleo" size={24} color="#2196F3" />
+            </Pressable>
+          </View>
+        </>
       ) : loading ? (
         <ActivityIndicator size="large" />
       ) : !!brigades && brigades.length ? (
@@ -274,10 +281,7 @@ const UserBrigadeForm: FC<{ isInitial?: boolean }> = ({
             data={brigades}
             keyExtractor={(item) => item.name}
             renderItem={({ item }) => (
-              <Pressable
-                style={styles.brigadeItem}
-                onPress={() => setBrigade(item)}
-              >
+              <Pressable style={styles.input} onPress={() => setBrigade(item)}>
                 <Text style={styles.brigadeName}>
                   {item.name} ({item.province}, {item.municipality})
                 </Text>
@@ -316,7 +320,8 @@ const UserBrigadeForm: FC<{ isInitial?: boolean }> = ({
 
 const styles = StyleSheet.create({
   content: contentStyle,
-  input: inputStyle,
+  input: { ...inputStyle, marginVertical: 8 },
+  label: labelStyle,
   title: titleStyle,
   brigades: {
     flexGrow: 0,
@@ -330,18 +335,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
   },
-  brigadeItem: {
-    borderColor: "#DDDDDD",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 5,
-  },
   brigadeName: {
     color: "#2196F3",
-  },
-  label: {
-    marginBottom: 10,
   },
 });
 

@@ -7,6 +7,7 @@ import firestore from "@react-native-firebase/firestore";
 import { useFcmToken } from "../../utils/notifications";
 import TextButton from "../../components/TextButton";
 import { contentStyle } from "../../styles/content";
+import { labelStyle } from "../../styles/label";
 
 interface UserDataToSave {
   userUid: string;
@@ -46,7 +47,7 @@ const UserName: FC<{ isInitial?: boolean }> = ({ isInitial = false }) => {
 
   // this component could be shown in the initial state just before signing in
   // if the user data is not existing
-  const saveButton = isInitial ? "Save" : "Next";
+  const saveButton = isInitial ? "Next" : "Save";
   const isFormChanged =
     userData?.firstName !== firstName || userData?.lastName !== lastName;
 
@@ -58,16 +59,15 @@ const UserName: FC<{ isInitial?: boolean }> = ({ isInitial = false }) => {
 
   return (
     <View style={styles.content}>
-      <Text style={styles.title}>Your name</Text>
+      <Text style={styles.label}>First name</Text>
       <TextInput
         style={styles.input}
-        placeholder="first name"
         value={firstName}
         onChangeText={setFirstName}
       />
+      <Text style={styles.label}>Last name</Text>
       <TextInput
         style={styles.input}
-        placeholder="last name"
         value={lastName}
         onChangeText={setLastName}
       />
@@ -85,6 +85,7 @@ export default UserName;
 
 const styles = StyleSheet.create({
   content: contentStyle,
-  input: inputStyle,
+  label: labelStyle,
+  input: { ...inputStyle, marginVertical: 8 },
   title: titleStyle,
 });

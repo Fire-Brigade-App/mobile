@@ -11,6 +11,8 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useAuth } from "./auth";
 import TextButton from "../../components/TextButton";
 import { Loader } from "../../components/loader/Loader";
+import { inputStyle } from "../../styles/input";
+import { labelStyle } from "../../styles/label";
 
 enum ErrorCode {
   EMAIL_ALREADY_IN_USE = "auth/email-already-in-use",
@@ -103,15 +105,11 @@ export const SignInWithEmailAndPassword: FC = () => {
           )}
         </View>
       )} */}
+      <Text style={styles.label}>Email</Text>
+      <TextInput style={styles.input} value={email} onChangeText={setEmail} />
+      <Text style={styles.label}>Password</Text>
       <TextInput
         style={styles.input}
-        placeholder="email"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="password"
         value={password}
         secureTextEntry
         onChangeText={setPassword}
@@ -119,19 +117,22 @@ export const SignInWithEmailAndPassword: FC = () => {
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
-        <Button disabled={disabled} onPress={handleLogin} title="Login" />
+        <TextButton
+          disabled={disabled}
+          onPress={handleLogin}
+          align="center"
+          title="Login"
+        />
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  label: labelStyle,
   input: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#DDDDDD",
-    padding: 10,
-    marginBottom: 15,
+    ...inputStyle,
+    marginVertical: 8,
   },
   error: {
     color: "red",

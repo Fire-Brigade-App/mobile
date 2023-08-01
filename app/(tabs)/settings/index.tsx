@@ -14,12 +14,12 @@ const Settings: FC = () => {
         options={{
           headerShown: true,
           headerTitle: "Settings",
+          headerRight: () => {
+            return <SignOut />;
+          },
         }}
       />
       <Screen>
-        <View style={styles.top}>
-          <SignOut />
-        </View>
         <View style={styles.content}>
           <Link href="/settings/user-name" style={styles.link}>
             Your profile
@@ -44,9 +44,6 @@ const Settings: FC = () => {
 export default Settings;
 
 const styles = StyleSheet.create({
-  top: {
-    width: "100%",
-  },
   content: {
     width: "100%",
     flex: 1,
