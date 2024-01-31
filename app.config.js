@@ -17,6 +17,7 @@ export default {
     },
     githubUrl: "https://github.com/Fire-Brigade-App",
     plugins: [
+      ["expo-router"],
       [
         "expo-location",
         {
@@ -66,6 +67,7 @@ export default {
       ],
     },
     ios: {
+      bundleIdentifier: process.env.PACKAGE_NAME,
       associatedDomains: [
         `applinks:${process.env.DYNAMIC_LINK_SCHEME}://${process.env.DYNAMIC_LINK_DOMAIN}`,
       ],

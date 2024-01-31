@@ -18,7 +18,10 @@ export const SignOut: FC = () => {
   };
 
   return (
-    <Pressable style={{ flexDirection: "row" }} onPress={handleLogout}>
+    <Pressable
+      style={{ flexDirection: "row", alignItems: "center" }}
+      onPress={handleLogout}
+    >
       {loading ? (
         <Loader />
       ) : (
